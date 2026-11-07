@@ -135,24 +135,24 @@ export default function Customers() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-border/60">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-text">Customers</h1>
-          <p className="text-sm text-text-muted mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-text">Customers</h1>
+          <p className="text-xs md:text-sm text-text-muted mt-1">
             Maintain customer records, prescription histories, and billing files.
           </p>
         </div>
         <button
           onClick={openAddModal}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-[var(--radius-control)] hover:bg-[var(--color-primary-hover)] transition-colors shadow-sm self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-[var(--radius-control)] hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           Add Customer
         </button>
       </div>
 
-      <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-card)] flex flex-wrap gap-4 items-center justify-between">
+      <div className="glass-panel rounded-[var(--radius-card)] border border-border p-4 shadow-2xs flex flex-wrap gap-4 items-center justify-between">
         <div className="relative flex-1 min-w-[240px]">
           <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -160,28 +160,28 @@ export default function Customers() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search by customer name or phone..."
-            className="w-full pl-9 pr-4 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full pl-9 pr-4 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/80 text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
       </div>
 
-      <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden shadow-[var(--shadow-card)]">
+      <div className="glass-table-container rounded-[var(--radius-card)] border border-border overflow-hidden shadow-2xs">
         {isLoading ? (
           <div className="p-8 space-y-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-10 bg-bg animate-pulse rounded-[var(--radius-control)]" />
+              <div key={i} className="h-10 bg-ivory-subtle animate-pulse rounded-[var(--radius-control)]" />
             ))}
           </div>
         ) : isError ? (
           <div className="p-12 text-center flex flex-col items-center">
-            <AlertCircle className="w-10 h-10 text-red mb-3" />
+            <AlertCircle className="w-10 h-10 text-coral mb-3" />
             <h3 className="text-base font-semibold text-text">Failed to load customer records</h3>
             <p className="text-sm text-text-muted mt-1 mb-4">
               {(error as any)?.detail || "Could not retrieve customer database."}
             </p>
             <button
               onClick={() => refetch()}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-bg transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-white/80 transition-colors"
             >
               <RefreshCw className="w-4 h-4" /> Retry
             </button>
@@ -194,7 +194,7 @@ export default function Customers() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-bg border-b border-border text-xs uppercase text-text-muted font-medium tracking-wider">
+              <thead className="glass-table-header border-b border-border/80 text-xs uppercase text-text-muted font-medium tracking-wider">
                 <tr>
                   <th className="px-6 py-3.5">Cust #</th>
                   <th className="px-6 py-3.5">Name</th>
@@ -204,9 +204,9 @@ export default function Customers() {
                   <th className="px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="glass-table-body divide-y divide-border/60">
                 {customerData.items.map((cust) => (
-                  <tr key={cust.cust_no} className="hover:bg-mint/20 transition-colors">
+                  <tr key={cust.cust_no} className="hover:bg-sage/40 transition-colors">
                     <td className="px-6 py-4 font-mono font-medium text-text">
                       C-{cust.cust_no}
                     </td>
@@ -231,7 +231,7 @@ export default function Customers() {
                       </button>
                       <button
                         onClick={() => setDeleteCandidate(cust)}
-                        className="p-1 text-text-muted hover:text-red transition-colors"
+                        className="p-1 text-text-muted hover:text-coral transition-colors"
                         title="Delete customer"
                       >
                         <Trash2 className="w-4 h-4 inline" />
@@ -245,7 +245,7 @@ export default function Customers() {
         )}
 
         {customerData && customerData.total > 0 && (
-          <div className="border-t border-border px-6 py-3 flex items-center justify-between text-sm bg-bg text-text-muted">
+          <div className="glass-table-header border-t border-border/80 px-6 py-3 flex items-center justify-between text-xs md:text-sm text-text-muted">
             <div>
               Showing <span className="font-medium text-text">{(page - 1) * pageSize + 1}</span> to{" "}
               <span className="font-medium text-text">
@@ -257,7 +257,7 @@ export default function Customers() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="p-1.5 rounded border border-border disabled:opacity-40 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                className="p-1.5 rounded-lg border border-border/80 bg-white/70 hover:bg-white text-text disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -267,7 +267,7 @@ export default function Customers() {
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="p-1.5 rounded border border-border disabled:opacity-40 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                className="p-1.5 rounded-lg border border-border/80 bg-white/70 hover:bg-white text-text disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -278,9 +278,9 @@ export default function Customers() {
 
       {/* History Modal */}
       {historyCust && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-surface rounded-[var(--radius-card)] border border-border shadow-xl w-full max-w-2xl max-h-[85vh] flex flex-col p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
+        <div className="glass-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="glass-modal rounded-[var(--radius-card)] border border-border shadow-xl w-full max-w-2xl max-h-[85vh] flex flex-col p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
               <div>
                 <h2 className="text-lg font-bold text-text">
                   Customer History: {historyCust.cust_name}
@@ -307,13 +307,13 @@ export default function Customers() {
                       {historyData?.sales.length || 0})
                     </h3>
                     {!historyData?.sales.length ? (
-                      <p className="text-xs text-text-muted bg-bg p-3 rounded">
+                      <p className="text-xs text-text-muted bg-ivory-subtle p-3 rounded-[var(--radius-control)]">
                         No purchase records found.
                       </p>
                     ) : (
-                      <div className="rounded border border-border overflow-hidden">
+                      <div className="glass-table-container rounded-[var(--radius-control)] border border-border/80 overflow-hidden">
                         <table className="w-full text-left text-xs">
-                          <thead className="bg-bg text-text-muted border-b border-border">
+                          <thead className="glass-table-header text-text-muted border-b border-border/60">
                             <tr>
                               <th className="px-3 py-2">Bill #</th>
                               <th className="px-3 py-2">Date</th>
@@ -323,15 +323,15 @@ export default function Customers() {
                               <th className="px-3 py-2 text-right">Amount</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-border">
+                          <tbody className="glass-table-body divide-y divide-border/60">
                             {historyData.sales.map((s) => (
-                              <tr key={s.bill_no}>
-                                <td className="px-3 py-2 font-mono">#{s.bill_no}</td>
-                                <td className="px-3 py-2">{formatDate(s.sale_date)}</td>
+                              <tr key={s.bill_no} className="hover:bg-sage/40 transition-colors">
+                                <td className="px-3 py-2 font-mono font-medium">#{s.bill_no}</td>
+                                <td className="px-3 py-2 text-text-muted">{formatDate(s.sale_date)}</td>
                                 <td className="px-3 py-2">{s.emp_name || "—"}</td>
-                                <td className="px-3 py-2">{s.item_count} items</td>
+                                <td className="px-3 py-2 text-text-muted">{s.item_count} items</td>
                                 <td className="px-3 py-2">{s.payment_mode}</td>
-                                <td className="px-3 py-2 text-right font-semibold">
+                                <td className="px-3 py-2 text-right font-semibold text-text">
                                   {formatCurrency(s.total_amt)}
                                 </td>
                               </tr>
@@ -349,13 +349,13 @@ export default function Customers() {
                       {historyData?.prescriptions.length || 0})
                     </h3>
                     {!historyData?.prescriptions.length ? (
-                      <p className="text-xs text-text-muted bg-bg p-3 rounded">
+                      <p className="text-xs text-text-muted bg-ivory-subtle p-3 rounded-[var(--radius-control)]">
                         No registered prescriptions found.
                       </p>
                     ) : (
-                      <div className="rounded border border-border overflow-hidden">
+                      <div className="glass-table-container rounded-[var(--radius-control)] border border-border/80 overflow-hidden">
                         <table className="w-full text-left text-xs">
-                          <thead className="bg-bg text-text-muted border-b border-border">
+                          <thead className="glass-table-header text-text-muted border-b border-border/60">
                             <tr>
                               <th className="px-3 py-2">Pres #</th>
                               <th className="px-3 py-2">Date</th>
@@ -364,16 +364,16 @@ export default function Customers() {
                               <th className="px-3 py-2 text-right">Medicines</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-border">
+                          <tbody className="glass-table-body divide-y divide-border/60">
                             {historyData.prescriptions.map((p) => (
-                              <tr key={p.pres_no}>
-                                <td className="px-3 py-2 font-mono">RX-{p.pres_no}</td>
-                                <td className="px-3 py-2">{formatDate(p.pres_date)}</td>
-                                <td className="px-3 py-2 font-medium">{p.doc_name || "—"}</td>
+                              <tr key={p.pres_no} className="hover:bg-sage/40 transition-colors">
+                                <td className="px-3 py-2 font-mono font-medium">RX-{p.pres_no}</td>
+                                <td className="px-3 py-2 text-text-muted">{formatDate(p.pres_date)}</td>
+                                <td className="px-3 py-2 font-medium text-text">{p.doc_name || "—"}</td>
                                 <td className="px-3 py-2 text-text-muted">
                                   {p.diagnosis || "—"}
                                 </td>
-                                <td className="px-3 py-2 text-right font-semibold">
+                                <td className="px-3 py-2 text-right font-semibold text-text">
                                   {p.item_count}
                                 </td>
                               </tr>
@@ -392,14 +392,14 @@ export default function Customers() {
 
       {/* Add / Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-surface rounded-[var(--radius-card)] border border-border shadow-xl w-full max-w-md p-6 space-y-4">
+        <div className="glass-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="glass-modal rounded-[var(--radius-card)] border border-border shadow-xl w-full max-w-md p-6 space-y-4">
             <h2 className="text-lg font-bold text-text">
               {editingCust ? "Edit Customer" : "Add New Customer"}
             </h2>
 
             {formError && (
-              <div className="p-3 bg-[var(--color-red-tint)] text-red text-sm rounded-[var(--radius-control)]">
+              <div className="p-3 bg-coral-tint border border-coral/20 text-coral text-sm rounded-[var(--radius-control)]">
                 {formError}
               </div>
             )}
@@ -412,7 +412,7 @@ export default function Customers() {
                   required
                   value={formData.cust_name}
                   onChange={(e) => setFormData({ ...formData, cust_name: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   placeholder="e.g. Suresh Shah"
                 />
               </div>
@@ -431,7 +431,7 @@ export default function Customers() {
                         age: e.target.value ? parseInt(e.target.value) : undefined,
                       })
                     }
-                    className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                     placeholder="e.g. 42"
                   />
                 </div>
@@ -442,7 +442,7 @@ export default function Customers() {
                     type="text"
                     value={formData.phone_no || ""}
                     onChange={(e) => setFormData({ ...formData, phone_no: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                     placeholder="e.g. 9898776655"
                   />
                 </div>
@@ -454,23 +454,23 @@ export default function Customers() {
                   rows={2}
                   value={formData.address || ""}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   placeholder="Residential address / locality"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border/60">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-bg transition-colors"
+                  className="px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-white/80 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
-                  className="px-4 py-2 bg-primary text-white rounded-[var(--radius-control)] text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors disabled:opacity-50"
+                  className="px-4 py-2 bg-primary text-white rounded-[var(--radius-control)] text-sm font-medium hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 disabled:opacity-50"
                 >
                   {createMutation.isPending || updateMutation.isPending ? "Saving..." : "Save"}
                 </button>
@@ -482,8 +482,8 @@ export default function Customers() {
 
       {/* Delete Confirmation */}
       {deleteCandidate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-surface rounded-[var(--radius-card)] border border-border shadow-xl w-full max-w-sm p-6 space-y-4">
+        <div className="glass-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="glass-modal rounded-[var(--radius-card)] border border-border shadow-xl w-full max-w-sm p-6 space-y-4">
             <h2 className="text-base font-bold text-text">Confirm Deletion</h2>
             <p className="text-sm text-text-muted">
               Are you sure you want to delete customer{" "}
@@ -493,7 +493,7 @@ export default function Customers() {
               <button
                 type="button"
                 onClick={() => setDeleteCandidate(null)}
-                className="px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-bg transition-colors"
+                className="px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-white/80 transition-colors"
               >
                 Cancel
               </button>
@@ -501,7 +501,7 @@ export default function Customers() {
                 type="button"
                 onClick={handleDeleteConfirm}
                 disabled={deleteMutation.isPending}
-                className="px-4 py-2 bg-red text-white rounded-[var(--radius-control)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="px-4 py-2 bg-coral text-white rounded-[var(--radius-control)] text-sm font-medium hover:bg-coral/90 transition-colors disabled:opacity-50 shadow-xs shadow-coral/25"
               >
                 {deleteMutation.isPending ? "Deleting..." : "Delete"}
               </button>

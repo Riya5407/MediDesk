@@ -13,9 +13,10 @@ import {
   UserCog,
   BarChart3,
   ChevronLeft,
+  LogOut,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useCurrentUser } from "../api/auth";
+import { useCurrentUser, useLogout } from "../api/auth";
 
 interface NavItem {
   label: string;
@@ -59,6 +60,7 @@ export default function Sidebar({
   };
 
   const { data: user } = useCurrentUser();
+  const logoutMutation = useLogout();
   const role = user?.role || "admin";
 
   const visibleNavItems = navItems.filter(
@@ -67,7 +69,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className="glass-sidebar fixed top-0 left-0 h-screen flex flex-col z-30 transition-[width] duration-200 ease-out"
+      className="glass-sidebar fixed top-0 left-0 h-screen flex flex-col z-30 transition-[width] duration-200 ease-out border-r border-border"
       style={{
         width: isCollapsed
           ? "var(--sidebar-width-collapsed, 72px)"
@@ -75,20 +77,31 @@ export default function Sidebar({
       }}
     >
       {/* Brand Header */}
-      <div className="flex items-center justify-between px-4 py-4 border-b border-white/60 h-16 shrink-0">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <img
-            src="/logo.png"
-            alt="MediDeck Logo"
-            className="h-9 w-9 object-contain rounded-lg shrink-0"
-          />
+      <div
+        className={`relative flex items-center border-b border-border/80 h-16 shrink-0 bg-white/40 transition-all ${
+          isCollapsed ? "justify-center px-0" : "justify-between px-3.5"
+        }`}
+      >
+        <div className={`flex items-center min-w-0 ${isCollapsed ? "justify-center" : "gap-2.5"}`}>
+          <div className="w-9 h-9 rounded-xl bg-white/90 border border-primary/15 shadow-2xs flex items-center justify-center shrink-0 overflow-hidden relative">
+            <img
+              src="/logo.png"
+              alt="MediDeck Logo"
+              className="w-full h-full object-contain scale-[1.28] translate-y-[1px]"
+            />
+          </div>
           <div
-            className={`text-lg font-bold tracking-tight select-none flex items-center transition-opacity duration-200 ${
+            className={`select-none flex flex-col justify-center transition-opacity duration-200 ${
               isCollapsed ? "sr-only" : "opacity-100"
             }`}
           >
-            <span className="text-primary font-bold">Medi</span>
-            <span className="text-secondary ml-0.5 font-bold">Deck</span>
+            <div className="text-[17px] font-bold tracking-tight leading-tight flex items-center">
+              <span className="text-primary font-bold">Medi</span>
+              <span className="text-secondary font-bold ml-0.5">Deck</span>
+            </div>
+            <span className="text-[9.5px] font-semibold uppercase tracking-wider text-text-muted/70 leading-none mt-0.5">
+              Dispensary OS
+            </span>
           </div>
         </div>
 
@@ -97,7 +110,11 @@ export default function Sidebar({
           type="button"
           onClick={handleToggle}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-white/80 transition-colors shrink-0 cursor-pointer"
+          className={`text-text-muted hover:text-primary transition-colors shrink-0 cursor-pointer ${
+            isCollapsed
+              ? "absolute -right-3 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/95 border border-border shadow-2xs hover:bg-white z-40"
+              : "p-1.5 rounded-lg hover:bg-white/80"
+          }`}
           title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <ChevronLeft
@@ -122,8 +139,8 @@ export default function Sidebar({
                     isCollapsed ? "justify-center px-0" : ""
                   } ${
                     isActive
-                      ? "bg-primary text-white shadow-sm shadow-primary/30 font-semibold"
-                      : "text-text-muted hover:bg-white/70 hover:text-primary hover:shadow-xs"
+                      ? "bg-primary text-white shadow-xs shadow-primary/30 font-semibold"
+                      : "text-text-muted hover:bg-white/80 hover:text-primary hover:shadow-2xs"
                   }`
                 }
               >
@@ -140,6 +157,35 @@ export default function Sidebar({
           ))}
         </ul>
       </nav>
+
+      {/* Anchored Profile & Logout Footer */}
+      {user && (
+        <div className="p-3 border-t border-border/80 bg-white/40 mt-auto shrink-0">
+          <div className={`flex items-center ${isCollapsed ? "justify-center" : "justify-between"} gap-2`}>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-sage flex items-center justify-center text-primary font-semibold text-xs border border-sage-accent/30 shrink-0">
+                {user.username.charAt(0).toUpperCase()}
+              </div>
+              {!isCollapsed && (
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-text truncate">{user.username}</p>
+                  <p className="text-[10px] uppercase font-semibold text-primary tracking-wider">{user.role}</p>
+                </div>
+              )}
+            </div>
+            {!isCollapsed && (
+              <button
+                onClick={() => logoutMutation.mutate()}
+                disabled={logoutMutation.isPending}
+                className="p-1.5 rounded-lg text-text-muted hover:text-coral hover:bg-coral-tint transition-colors cursor-pointer"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

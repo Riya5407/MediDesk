@@ -42,6 +42,19 @@ async def test_dashboard_stock_alerts(client: AsyncClient):
 
 
 @pytest.mark.asyncio
+async def test_dashboard_category_stock(client: AsyncClient):
+    """GET /api/dashboard/category-stock returns stock aggregation by category."""
+    resp = await client.get("/api/dashboard/category-stock")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert isinstance(data, list)
+    for item in data:
+        assert "category" in item
+        assert "total_stock" in item
+        assert item["total_stock"] > 0
+
+
+@pytest.mark.asyncio
 async def test_reports_sales_by_date(client: AsyncClient):
     """GET /api/reports/sales-by-date returns sales by date rows."""
     resp = await client.get("/api/reports/sales-by-date?from=2020-01-01&to=2030-01-01")

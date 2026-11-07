@@ -3,14 +3,14 @@ interface StatusBadgeProps {
 }
 
 export default function StatusBadge({ status }: StatusBadgeProps) {
-  let bgClass = "bg-mint text-primary";
+  let badgeClass = "bg-sage text-primary border border-sage-accent/30";
   let label = status.replace(/_/g, " ");
 
   if (status === "in_stock" || status === "Delivered") {
-    bgClass = "bg-mint text-primary";
+    badgeClass = "bg-sage text-primary border border-sage-accent/30 font-medium";
     label = status === "in_stock" ? "In Stock" : "Delivered";
   } else if (status === "low_stock" || status === "expiring_soon" || status === "Pending") {
-    bgClass = "bg-[var(--color-amber-tint)] text-text";
+    badgeClass = "bg-amber-tint text-amber-800 border border-amber/30 font-medium";
     label =
       status === "low_stock"
         ? "Low Stock"
@@ -18,16 +18,18 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
         ? "Expiring Soon"
         : "Pending";
   } else if (status === "expired" || status === "out_of_stock") {
-    bgClass = "bg-[var(--color-red-tint)] text-red";
+    badgeClass = "bg-coral-tint text-coral border border-coral/30 font-medium";
     label = status === "expired" ? "Expired" : "Out of Stock";
   } else if (status === "Cancelled") {
-    bgClass = "border border-border text-text-muted";
+    badgeClass = "bg-ivory-subtle border border-border text-text-muted font-medium";
     label = "Cancelled";
+  } else {
+    badgeClass = "bg-ivory border border-border text-text-muted font-medium";
   }
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${bgClass}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs capitalize tracking-wide shadow-2xs ${badgeClass}`}
     >
       {label}
     </span>

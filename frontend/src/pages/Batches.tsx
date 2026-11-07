@@ -21,6 +21,9 @@ import {
   CheckCircle,
   Clock,
   XCircle,
+  Pill,
+  CalendarClock,
+  CalendarX,
 } from "lucide-react";
 
 export default function Batches() {
@@ -153,69 +156,69 @@ export default function Batches() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-border/60">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-text">Batches &amp; Expiry</h1>
-          <p className="text-sm text-text-muted mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-text">Batches &amp; Expiry</h1>
+          <p className="text-xs md:text-sm text-text-muted mt-1">
             Track batches, monitor upcoming expirations, and maintain stock health.
           </p>
         </div>
         <button
           onClick={openAddModal}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-[var(--radius-control)] hover:bg-[var(--color-primary-hover)] transition-colors shadow-sm self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-[var(--radius-control)] hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           Add Batch
         </button>
       </div>
 
-      {/* KPI Summary Cards (ShelfLifePro reference) */}
+      {/* KPI Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-[var(--radius-control)] bg-mint flex items-center justify-center text-primary">
-            <Package className="w-6 h-6" />
+        <div className="glass-panel rounded-[var(--radius-card)] border border-border p-5 shadow-2xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-[var(--radius-control)] bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 text-primary border border-primary/20 shadow-2xs flex items-center justify-center">
+            <Pill className="w-6 h-6" strokeWidth={1.75} />
           </div>
           <div>
-            <div className="text-xs uppercase font-medium text-text-muted">Total Batches</div>
+            <div className="text-xs uppercase font-medium text-text-muted tracking-wide">Total Batches</div>
             <div className="text-2xl font-bold text-text mt-0.5">{counts.total}</div>
           </div>
         </div>
 
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-[var(--radius-control)] bg-mint flex items-center justify-center text-primary">
-            <CheckCircle className="w-6 h-6" />
+        <div className="glass-panel rounded-[var(--radius-card)] border border-border p-5 shadow-2xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-[var(--radius-control)] bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 text-primary border border-primary/20 shadow-2xs flex items-center justify-center">
+            <CheckCircle className="w-6 h-6" strokeWidth={1.75} />
           </div>
           <div>
-            <div className="text-xs uppercase font-medium text-text-muted">Valid Batches</div>
+            <div className="text-xs uppercase font-medium text-text-muted tracking-wide">Valid Batches</div>
             <div className="text-2xl font-bold text-text mt-0.5">{counts.valid}</div>
           </div>
         </div>
 
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-[var(--radius-control)] bg-[var(--color-amber-tint)] flex items-center justify-center text-[var(--color-amber)]">
-            <Clock className="w-6 h-6 text-text" />
+        <div className="glass-panel rounded-[var(--radius-card)] border border-border p-5 shadow-2xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-[var(--radius-control)] bg-gradient-to-br from-amber/20 via-amber/10 to-amber/5 text-amber border border-amber/30 shadow-2xs flex items-center justify-center">
+            <CalendarClock className="w-6 h-6" strokeWidth={1.75} />
           </div>
           <div>
-            <div className="text-xs uppercase font-medium text-text-muted">Expiring Soon</div>
-            <div className="text-2xl font-bold text-text mt-0.5">{counts.expiring_soon}</div>
+            <div className="text-xs uppercase font-medium text-text-muted tracking-wide">Expiring Soon</div>
+            <div className="text-2xl font-bold text-amber mt-0.5">{counts.expiring_soon}</div>
           </div>
         </div>
 
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-[var(--radius-control)] bg-[var(--color-red-tint)] flex items-center justify-center text-red">
-            <XCircle className="w-6 h-6" />
+        <div className="glass-panel rounded-[var(--radius-card)] border border-border p-5 shadow-2xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-[var(--radius-control)] bg-gradient-to-br from-coral/20 via-coral/10 to-coral/5 text-coral border border-coral/30 shadow-2xs flex items-center justify-center">
+            <CalendarX className="w-6 h-6" strokeWidth={1.75} />
           </div>
           <div>
-            <div className="text-xs uppercase font-medium text-text-muted">Expired Batches</div>
-            <div className="text-2xl font-bold text-red mt-0.5">{counts.expired}</div>
+            <div className="text-xs uppercase font-medium text-text-muted tracking-wide">Expired Batches</div>
+            <div className="text-2xl font-bold text-coral mt-0.5">{counts.expired}</div>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-card)] flex flex-wrap gap-4 items-center justify-between">
+      <div className="glass-panel rounded-[var(--radius-card)] border border-border p-4 shadow-2xs flex flex-wrap gap-4 items-center justify-between">
         <div className="relative flex-1 min-w-[240px]">
           <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -223,7 +226,7 @@ export default function Batches() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search by medicine name..."
-            className="w-full pl-9 pr-4 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full pl-9 pr-4 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/80 text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
 
@@ -234,7 +237,7 @@ export default function Batches() {
               setSelectedStatus(e.target.value);
               setPage(1);
             }}
-            className="px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/80 text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           >
             <option value="">All Batch Statuses</option>
             <option value="in_stock">In Stock</option>
@@ -247,23 +250,23 @@ export default function Batches() {
       </div>
 
       {/* Main Table / State View */}
-      <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden shadow-[var(--shadow-card)]">
+      <div className="glass-table-container rounded-[var(--radius-card)] border border-border overflow-hidden shadow-2xs">
         {isLoading ? (
           <div className="p-8 space-y-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-10 bg-bg animate-pulse rounded-[var(--radius-control)]" />
+              <div key={i} className="h-10 bg-ivory-subtle animate-pulse rounded-[var(--radius-control)]" />
             ))}
           </div>
         ) : isError ? (
           <div className="p-12 text-center flex flex-col items-center">
-            <AlertCircle className="w-10 h-10 text-red mb-3" />
+            <AlertCircle className="w-10 h-10 text-coral mb-3" />
             <h3 className="text-base font-semibold text-text">Failed to load batches</h3>
             <p className="text-sm text-text-muted mt-1 mb-4">
               {(error as any)?.detail || "Could not retrieve batch records."}
             </p>
             <button
               onClick={() => refetch()}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-bg transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-white/80 transition-colors"
             >
               <RefreshCw className="w-4 h-4" /> Retry
             </button>
@@ -278,7 +281,7 @@ export default function Batches() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-bg border-b border-border text-xs uppercase text-text-muted font-medium tracking-wider">
+              <thead className="glass-table-header border-b border-border/80 text-xs uppercase text-text-muted font-medium tracking-wider">
                 <tr>
                   <th className="px-6 py-3.5">Batch #</th>
                   <th className="px-6 py-3.5">Medicine</th>
@@ -291,7 +294,7 @@ export default function Batches() {
                   <th className="px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="glass-table-body divide-y divide-border/60">
                 {batchData.items.map((batch) => {
                   const isExpired = batch.days_to_expiry !== null && batch.days_to_expiry! < 0;
                   const isExpSoon =
@@ -300,7 +303,7 @@ export default function Batches() {
                     batch.days_to_expiry! <= 30;
 
                   return (
-                    <tr key={batch.batch_no} className="hover:bg-mint/20 transition-colors">
+                    <tr key={batch.batch_no} className="hover:bg-sage/40 transition-colors">
                       <td className="px-6 py-4 font-mono font-medium text-text">
                         B-{batch.batch_no}
                       </td>
@@ -311,11 +314,11 @@ export default function Batches() {
                         {batch.days_to_expiry === null ? (
                           "—"
                         ) : isExpired ? (
-                          <span className="text-red font-semibold">
+                          <span className="text-coral font-semibold bg-coral-tint px-2 py-0.5 rounded text-xs">
                             Expired ({Math.abs(batch.days_to_expiry!)}d ago)
                           </span>
                         ) : isExpSoon ? (
-                          <span className="text-text font-semibold bg-[var(--color-amber-tint)] px-2 py-0.5 rounded">
+                          <span className="text-amber font-semibold bg-amber-tint px-2 py-0.5 rounded text-xs">
                             {batch.days_to_expiry} days
                           </span>
                         ) : (
@@ -337,7 +340,7 @@ export default function Batches() {
                         </button>
                         <button
                           onClick={() => setDeleteCandidate(batch)}
-                          className="p-1 text-text-muted hover:text-red transition-colors"
+                          className="p-1 text-text-muted hover:text-coral transition-colors"
                           title="Delete batch"
                         >
                           <Trash2 className="w-4 h-4 inline" />
@@ -353,7 +356,7 @@ export default function Batches() {
 
         {/* Server Pagination Bar */}
         {batchData && batchData.total > 0 && (
-          <div className="border-t border-border px-6 py-3 flex items-center justify-between text-sm bg-bg text-text-muted">
+          <div className="glass-table-header border-t border-border/80 px-6 py-3 flex items-center justify-between text-xs md:text-sm text-text-muted">
             <div>
               Showing{" "}
               <span className="font-medium text-text">
@@ -369,7 +372,7 @@ export default function Batches() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="p-1.5 rounded border border-border disabled:opacity-40 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                className="p-1.5 rounded-lg border border-border/80 bg-white/70 hover:bg-white text-text disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -379,7 +382,7 @@ export default function Batches() {
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="p-1.5 rounded border border-border disabled:opacity-40 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                className="p-1.5 rounded-lg border border-border/80 bg-white/70 hover:bg-white text-text disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -390,14 +393,14 @@ export default function Batches() {
 
       {/* Add / Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-surface rounded-[var(--radius-card)] border border-border shadow-xl w-full max-w-md p-6 space-y-4">
+        <div className="glass-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="glass-modal rounded-[var(--radius-card)] border border-border shadow-xl w-full max-w-md p-6 space-y-4">
             <h2 className="text-lg font-bold text-text">
               {editingBatch ? `Edit Batch B-${editingBatch.batch_no}` : "Add New Batch"}
             </h2>
 
             {formError && (
-              <div className="p-3 bg-[var(--color-red-tint)] text-red text-sm rounded-[var(--radius-control)]">
+              <div className="p-3 bg-coral-tint border border-coral/20 text-coral text-sm rounded-[var(--radius-control)]">
                 {formError}
               </div>
             )}
@@ -411,7 +414,7 @@ export default function Batches() {
                   required
                   value={formData.med_no}
                   onChange={(e) => setFormData({ ...formData, med_no: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 >
                   <option value={0} disabled>
                     Select Medicine
@@ -433,7 +436,7 @@ export default function Batches() {
                     type="date"
                     value={formData.mfg_date || ""}
                     onChange={(e) => setFormData({ ...formData, mfg_date: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
 
@@ -446,7 +449,7 @@ export default function Batches() {
                     required
                     value={formData.exp_date || ""}
                     onChange={(e) => setFormData({ ...formData, exp_date: e.target.value })}
-                    className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
               </div>
@@ -464,7 +467,7 @@ export default function Batches() {
                     onChange={(e) =>
                       setFormData({ ...formData, qty_in_stock: parseInt(e.target.value) || 0 })
                     }
-                    className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
 
@@ -483,24 +486,24 @@ export default function Batches() {
                         pur_price: e.target.value ? parseFloat(e.target.value) : undefined,
                       })
                     }
-                    className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                     placeholder="0.00"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border/60">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-bg transition-colors"
+                  className="px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-white/80 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
-                  className="px-4 py-2 bg-primary text-white rounded-[var(--radius-control)] text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors disabled:opacity-50"
+                  className="px-4 py-2 bg-primary text-white rounded-[var(--radius-control)] text-sm font-medium hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 disabled:opacity-50"
                 >
                   {createMutation.isPending || updateMutation.isPending ? "Saving..." : "Save"}
                 </button>
@@ -512,8 +515,8 @@ export default function Batches() {
 
       {/* Delete Confirmation Modal */}
       {deleteCandidate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-surface rounded-[var(--radius-card)] border border-border shadow-xl w-full max-w-sm p-6 space-y-4">
+        <div className="glass-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="glass-modal rounded-[var(--radius-card)] border border-border shadow-xl w-full max-w-sm p-6 space-y-4">
             <h2 className="text-base font-bold text-text">Confirm Deletion</h2>
             <p className="text-sm text-text-muted">
               Are you sure you want to delete batch{" "}
@@ -524,7 +527,7 @@ export default function Batches() {
               <button
                 type="button"
                 onClick={() => setDeleteCandidate(null)}
-                className="px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-bg transition-colors"
+                className="px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-white/80 transition-colors"
               >
                 Cancel
               </button>
@@ -532,7 +535,7 @@ export default function Batches() {
                 type="button"
                 onClick={handleDeleteConfirm}
                 disabled={deleteMutation.isPending}
-                className="px-4 py-2 bg-red text-white rounded-[var(--radius-control)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="px-4 py-2 bg-coral text-white rounded-[var(--radius-control)] text-sm font-medium hover:bg-coral/90 transition-colors disabled:opacity-50"
               >
                 {deleteMutation.isPending ? "Deleting..." : "Delete"}
               </button>

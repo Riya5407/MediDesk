@@ -27,6 +27,11 @@ export interface StockAlert {
   status: "expired" | "out_of_stock" | "expiring_soon" | "low_stock" | "in_stock";
 }
 
+export interface CategoryStockPoint {
+  category: string;
+  total_stock: number;
+}
+
 export function useDashboardSummary() {
   return useQuery({
     queryKey: ["dashboard", "summary"],
@@ -47,6 +52,14 @@ export function useStockAlerts(limit: number = 10) {
   return useQuery({
     queryKey: ["dashboard", "stock-alerts", limit],
     queryFn: () => request<StockAlert[]>(`/api/dashboard/stock-alerts?limit=${limit}`),
+    refetchInterval: 60_000,
+  });
+}
+
+export function useCategoryStock() {
+  return useQuery({
+    queryKey: ["dashboard", "category-stock"],
+    queryFn: () => request<CategoryStockPoint[]>("/api/dashboard/category-stock"),
     refetchInterval: 60_000,
   });
 }

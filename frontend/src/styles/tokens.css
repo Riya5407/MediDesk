@@ -1,47 +1,58 @@
 :root {
-  /* Brand Clinical Palette */
-  --color-primary: #087E78;          /* Deep teal */
-  --color-primary-hover: #066560;
-  --color-secondary: #19A99A;        /* Mint teal */
-  --color-mint: #E8F5F4;             /* Soft mint surface tint */
-  --color-mint-accent: #19A99A;
-  --color-bg: #F5F9FA;               /* Page background (crisp clinical light) */
-  --color-surface: #FFFFFF;          /* Pure white card surface */
+  /* Warm Clinical Luxury Palette */
+  --color-primary: #096B65;          /* Deep regal teal */
+  --color-primary-hover: #07524E;
+  --color-secondary: #1FA89B;        /* Soft silk teal */
+  --color-secondary-hover: #198C81;
+  --color-bg: #F5F9FA;               /* Soft clinical background */
+  --color-surface: #FFFFFF;          /* Pure white card base */
+  --color-ivory: #FAF7F2;
+  --color-ivory-subtle: #F5EFE6;
 
-  /* Semantic Alerts */
-  --color-amber: #D97706;
-  --color-amber-tint: #FEF3C7;
-  --color-blue: #0284C7;
-  --color-blue-tint: #E0F2FE;
-  --color-red: #DC2626;
-  --color-red-tint: #FEE2E2;
+  /* Botanical and Semantic Colors */
+  --color-sage: #E8EFEA;             /* Gentle sage */
+  --color-sage-accent: #7A9A8B;      /* Botanical sage accent */
+  --color-sage-tint: #F2F7F4;
+  --color-mint: #E6F3F2;             /* Soft teal tint (legacy compat) */
+  --color-mint-accent: #1FA89B;
 
-  /* Text and Lines */
-  --color-text: #172B36;             /* Clinical dark slate */
-  --color-text-muted: #64748B;       /* Secondary slate */
-  --color-border: #E1EBEA;           /* Subtle clinical border */
+  --color-amber: #D97706;            /* Warm amber alert */
+  --color-amber-tint: #FDF3E7;
+  --color-coral: #D45B4B;            /* Muted coral warning */
+  --color-coral-tint: #FDF0EE;
+  --color-red: #D45B4B;              /* Map red to muted coral */
+  --color-red-tint: #FDF0EE;
+  --color-blue: #2A8296;             /* Muted medical blue */
+  --color-blue-tint: #EAF4F7;
 
-  /* Glassmorphism System — Tiered Visual Hierarchy */
+  /* Editorial Typography & Borders */
+  --color-text: #162826;             /* Deep slate-teal heading & primary */
+  --color-text-muted: #6E7C7A;       /* Warm slate secondary text */
+  --color-border: #EAE3D9;           /* Champagne border */
+  --color-border-subtle: #F0ECE4;
+  --color-border-teal: rgba(9, 107, 101, 0.12);
+
+  /* Glassmorphism System — Warm Clinical Luxury */
   /* Level 1: Shell (Sidebar & Topbar) */
-  --glass-shell-bg: rgba(255, 255, 255, 0.62);
-  --glass-header-bg: rgba(255, 255, 255, 0.65);
-  --glass-shell-blur: 22px;
+  --glass-shell-bg: rgba(250, 247, 242, 0.85);
+  --glass-header-bg: rgba(250, 247, 242, 0.88);
+  --glass-shell-blur: 20px;
 
   /* Level 2: Content Panels & KPI Cards */
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-kpi-bg: rgba(255, 255, 255, 0.52);
-  --glass-panel-bg: rgba(255, 255, 255, 0.58);
-  --glass-bg-hover: rgba(255, 255, 255, 0.72);
-  --glass-blur: 20px;
-  --glass-border: rgba(255, 255, 255, 0.85);
-  --glass-border-hairline: rgba(8, 126, 120, 0.10);
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-kpi-bg: rgba(255, 255, 255, 0.68);
+  --glass-panel-bg: rgba(255, 255, 255, 0.75);
+  --glass-bg-hover: rgba(255, 255, 255, 0.90);
+  --glass-blur: 18px;
+  --glass-border: rgba(234, 227, 217, 0.95);
+  --glass-border-hairline: rgba(9, 107, 101, 0.08);
   --glass-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
-  --glass-shadow: 0 10px 30px -5px rgba(8, 126, 120, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.02);
-  --glass-shadow-hover: 0 16px 36px -6px rgba(8, 126, 120, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+  --glass-shadow: 0 10px 30px -5px rgba(22, 40, 38, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  --glass-shadow-hover: 0 16px 36px -6px rgba(9, 107, 101, 0.09), 0 4px 12px -2px rgba(22, 40, 38, 0.03);
 
   /* Level 3: Dense Data Areas (Tables) */
-  --glass-table-bg: rgba(255, 255, 255, 0.82);
-  --glass-table-header-bg: rgba(255, 255, 255, 0.92);
+  --glass-table-bg: rgba(255, 255, 255, 0.88);
+  --glass-table-header-bg: rgba(250, 247, 242, 0.95);
 
   /* Shape and Depth */
   --radius-card: 16px;

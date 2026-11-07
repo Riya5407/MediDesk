@@ -39,11 +39,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg p-4">
-      <div className="w-full max-w-md bg-surface border border-border rounded-[var(--radius-card)] shadow-lg p-8 space-y-6">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Warm ambient background lights */}
+      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-amber/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="w-full max-w-md glass-modal rounded-[var(--radius-card)] border border-border shadow-xl p-8 space-y-6 relative z-10 backdrop-blur-xl">
         {/* Header / Brand */}
         <div className="text-center space-y-3">
-          <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-sm">
+          <div className="inline-flex items-center justify-center p-3.5 rounded-2xl bg-sage/70 border border-primary/20 shadow-2xs">
             <img
               src="/logo.png"
               alt="MediDeck Logo"
@@ -53,7 +57,7 @@ export default function Login() {
           <div>
             <div className="text-2xl font-bold tracking-tight text-text flex items-center justify-center">
               <span className="text-primary">Medi</span>
-              <span className="text-[#0D827D] ml-0.5">Deck</span>
+              <span className="text-secondary ml-0.5">Deck</span>
             </div>
             <p className="text-xs text-text-muted mt-1 uppercase tracking-wider font-medium">
               Pharmacy Management System
@@ -63,7 +67,7 @@ export default function Login() {
 
         {/* Error Feedback */}
         {errorMessage && (
-          <div className="flex items-center gap-2.5 p-3.5 rounded-[var(--radius-control)] bg-[var(--color-red-tint)] border border-red/20 text-red text-xs font-medium">
+          <div className="flex items-center gap-2.5 p-3.5 rounded-[var(--radius-control)] bg-coral-tint border border-coral/20 text-coral text-xs font-medium">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
@@ -85,7 +89,7 @@ export default function Login() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter username"
-                className="w-full pl-9 pr-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full pl-9 pr-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
           </div>
@@ -103,7 +107,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
-                className="w-full pl-9 pr-10 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full pl-9 pr-10 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/90 text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
               <button
                 type="button"
@@ -123,7 +127,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loginMutation.isPending}
-            className="w-full py-2.5 px-4 bg-primary text-white rounded-[var(--radius-control)] text-sm font-semibold hover:bg-[var(--color-primary-hover)] transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-2.5 px-4 bg-primary text-white rounded-[var(--radius-control)] text-sm font-semibold hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loginMutation.isPending ? (
               <>
@@ -138,7 +142,7 @@ export default function Login() {
 
         {/* Demo Account Quick-Fill Buttons (Available only in local development) */}
         {import.meta.env.DEV && (
-          <div className="pt-4 border-t border-border">
+          <div className="pt-4 border-t border-border/60">
             <p className="text-[11px] text-text-muted text-center font-medium mb-2.5">
               Default Demo Accounts (Dev Only)
             </p>
@@ -146,7 +150,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => fillCredentials("admin", "Admin@123")}
-                className="py-1 px-2 border border-border rounded text-[11px] text-text hover:bg-mint/40 transition-colors text-center"
+                className="py-1.5 px-2 border border-border/80 rounded-lg text-[11px] text-text bg-white/70 hover:bg-sage/40 transition-colors text-center"
               >
                 <div className="font-semibold text-primary">Admin</div>
                 <div className="text-[10px] text-text-muted">Full Access</div>
@@ -154,7 +158,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => fillCredentials("pharmacist", "Pharm@123")}
-                className="py-1 px-2 border border-border rounded text-[11px] text-text hover:bg-mint/40 transition-colors text-center"
+                className="py-1.5 px-2 border border-border/80 rounded-lg text-[11px] text-text bg-white/70 hover:bg-sage/40 transition-colors text-center"
               >
                 <div className="font-semibold text-primary">Pharmacist</div>
                 <div className="text-[10px] text-text-muted">Inventory</div>
@@ -162,7 +166,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => fillCredentials("cashier", "Cashier@123")}
-                className="py-1 px-2 border border-border rounded text-[11px] text-text hover:bg-mint/40 transition-colors text-center"
+                className="py-1.5 px-2 border border-border/80 rounded-lg text-[11px] text-text bg-white/70 hover:bg-sage/40 transition-colors text-center"
               >
                 <div className="font-semibold text-primary">Cashier</div>
                 <div className="text-[10px] text-text-muted">POS Billing</div>
@@ -174,4 +178,3 @@ export default function Login() {
     </div>
   );
 }
-

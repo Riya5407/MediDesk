@@ -130,19 +130,19 @@ export default function NewSale() {
     "₹" + n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-text">New Sale (POS)</h1>
-        <p className="text-sm text-text-muted mt-1">Search medicines, add to cart, and complete payment.</p>
+    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6">
+      <div className="pb-2 border-b border-border/60">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-text">New Sale (POS)</h1>
+        <p className="text-xs md:text-sm text-text-muted mt-1">Search medicines, add to cart, and complete payment.</p>
       </div>
 
       {submitSuccess !== null && (
-        <div className="mb-6 p-4 bg-[var(--color-mint)] border border-primary rounded-[var(--radius-card)] flex items-center gap-3">
+        <div className="p-4 bg-sage/80 border border-primary/20 rounded-[var(--radius-card)] flex items-center gap-3 shadow-2xs">
           <CheckCircle className="w-5 h-5 text-primary" />
           <div>
             <p className="font-semibold text-primary">Sale created — Bill #{submitSuccess}</p>
-            <p className="text-sm text-text-muted">
-              <button onClick={() => navigate("/sales")} className="underline hover:no-underline">
+            <p className="text-xs text-text-muted">
+              <button onClick={() => navigate("/sales")} className="underline hover:no-underline font-medium text-text">
                 View in Sales History
               </button>
             </p>
@@ -153,10 +153,10 @@ export default function NewSale() {
         </div>
       )}
 
-      <div className="flex gap-6 items-start">
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
         {/* Left: Medicine search */}
-        <div className="flex-1 min-w-0 space-y-4">
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-card)]">
+        <div className="flex-1 min-w-0 w-full space-y-4">
+          <div className="glass-panel rounded-[var(--radius-card)] border border-border p-4 shadow-2xs">
             <div className="relative">
               <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -164,17 +164,17 @@ export default function NewSale() {
                 value={searchQ}
                 onChange={(e) => setSearchQ(e.target.value)}
                 placeholder="Search medicines by name..."
-                className="w-full pl-9 pr-4 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full pl-9 pr-4 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/80 text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 autoFocus
               />
             </div>
           </div>
 
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden shadow-[var(--shadow-card)]">
+          <div className="glass-table-container rounded-[var(--radius-card)] border border-border overflow-hidden shadow-2xs">
             {medsLoading ? (
               <div className="p-6 space-y-3">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-14 bg-bg animate-pulse rounded-[var(--radius-control)]" />
+                  <div key={i} className="h-14 bg-ivory-subtle animate-pulse rounded-[var(--radius-control)]" />
                 ))}
               </div>
             ) : !meds?.length ? (
@@ -184,13 +184,13 @@ export default function NewSale() {
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-border max-h-[60vh] overflow-y-auto">
+              <div className="divide-y divide-border/60 max-h-[60vh] overflow-y-auto">
                 {meds.map((med) => {
                   const inCart = cart.some((c) => c.med_no === med.med_no && c.batch_no === med.batches[0]?.batch_no);
                   return (
                     <div
                       key={med.med_no}
-                      className="flex items-center justify-between px-4 py-3 hover:bg-mint/20 transition-colors"
+                      className="flex items-center justify-between px-4 py-3 hover:bg-sage/40 transition-colors"
                     >
                       <div>
                         <p className="font-medium text-text text-sm">{med.med_name}</p>
@@ -203,7 +203,7 @@ export default function NewSale() {
                         <button
                           onClick={() => addToCart(med)}
                           disabled={inCart || med.batches.length === 0}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-[var(--radius-control)] hover:bg-[var(--color-primary-hover)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-[var(--radius-control)] hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           <Plus className="w-3 h-3" />
                           {inCart ? "Added" : "Add"}
@@ -218,16 +218,16 @@ export default function NewSale() {
         </div>
 
         {/* Right: Cart */}
-        <div className="w-96 flex-shrink-0 space-y-4">
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-card)] space-y-3">
+        <div className="w-full lg:w-96 flex-shrink-0 space-y-4">
+          <div className="glass-panel rounded-[var(--radius-card)] border border-border p-5 shadow-2xs space-y-3">
             <h2 className="font-semibold text-text flex items-center gap-2">
-              <ShoppingCart className="w-4 h-4" /> Cart ({cart.length} item{cart.length !== 1 ? "s" : ""})
+              <ShoppingCart className="w-4 h-4 text-primary" /> Cart ({cart.length} item{cart.length !== 1 ? "s" : ""})
             </h2>
 
             {cart.length === 0 ? (
               <p className="text-sm text-text-muted text-center py-6">No items in cart.</p>
             ) : (
-              <div className="divide-y divide-border max-h-64 overflow-y-auto">
+              <div className="divide-y divide-border/60 max-h-64 overflow-y-auto">
                 {cart.map((item, idx) => (
                   <div key={idx} className="py-3 space-y-2">
                     <div className="flex items-start justify-between gap-2">
@@ -237,7 +237,7 @@ export default function NewSale() {
                       </div>
                       <button
                         onClick={() => removeFromCart(idx)}
-                        className="p-1 text-text-muted hover:text-red flex-shrink-0"
+                        className="p-1 text-text-muted hover:text-coral transition-colors flex-shrink-0"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -251,7 +251,7 @@ export default function NewSale() {
                           max={item.qty_in_stock}
                           value={item.qty_sold}
                           onChange={(e) => updateCart(idx, "qty_sold", Math.max(1, parseInt(e.target.value) || 1))}
-                          className="w-full px-2 py-1 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-1 focus:ring-primary"
+                          className="w-full px-2 py-1 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/80 text-text focus:outline-none focus:ring-1 focus:ring-primary"
                         />
                       </div>
                       <div>
@@ -262,7 +262,7 @@ export default function NewSale() {
                           step={0.01}
                           value={item.sale_price}
                           onChange={(e) => updateCart(idx, "sale_price", parseFloat(e.target.value) || 0)}
-                          className="w-full px-2 py-1 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-1 focus:ring-primary"
+                          className="w-full px-2 py-1 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/80 text-text focus:outline-none focus:ring-1 focus:ring-primary"
                         />
                       </div>
                     </div>
@@ -275,15 +275,15 @@ export default function NewSale() {
             )}
 
             {cart.length > 0 && (
-              <div className="border-t border-border pt-3 text-right">
-                <p className="text-sm text-text-muted">Grand Total</p>
+              <div className="border-t border-border/60 pt-3 text-right">
+                <p className="text-xs text-text-muted">Grand Total</p>
                 <p className="text-xl font-bold text-primary">{fmtCurrency(grandTotal)}</p>
               </div>
             )}
           </div>
 
           {/* Sale Details */}
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-card)] space-y-3">
+          <div className="glass-panel rounded-[var(--radius-card)] border border-border p-5 shadow-2xs space-y-3">
             <h2 className="font-semibold text-text text-sm">Sale Details</h2>
 
             <div>
@@ -292,7 +292,7 @@ export default function NewSale() {
                 <select
                   value={empNo}
                   onChange={(e) => setEmpNo(e.target.value ? parseInt(e.target.value) : "")}
-                  className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary appearance-none pr-8"
+                  className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/80 text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none pr-8"
                 >
                   <option value="">Select employee...</option>
                   {empData?.items.map((emp) => (
@@ -312,7 +312,7 @@ export default function NewSale() {
                 value={custNo}
                 onChange={(e) => setCustNo(e.target.value)}
                 placeholder="Leave blank for walk-in"
-                className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/80 text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
 
@@ -322,7 +322,7 @@ export default function NewSale() {
                 <select
                   value={paymentMode}
                   onChange={(e) => setPaymentMode(e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-[var(--radius-control)] text-sm bg-bg text-text focus:outline-none focus:ring-2 focus:ring-primary appearance-none pr-8"
+                  className="w-full px-3 py-2 border border-border/80 rounded-[var(--radius-control)] text-sm bg-white/80 text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none pr-8"
                 >
                   {paymentModes.map((mode) => (
                     <option key={mode} value={mode}>{mode}</option>
@@ -333,7 +333,7 @@ export default function NewSale() {
             </div>
 
             {submitError && (
-              <div className="p-3 bg-[var(--color-red-tint)] text-red text-sm rounded-[var(--radius-control)] flex items-start gap-2">
+              <div className="p-3 bg-coral-tint border border-coral/20 text-coral text-sm rounded-[var(--radius-control)] flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>{submitError}</span>
               </div>
@@ -342,7 +342,7 @@ export default function NewSale() {
             <button
               onClick={handleSubmit}
               disabled={createSale.isPending || cart.length === 0}
-              className="w-full px-4 py-2.5 bg-primary text-white rounded-[var(--radius-control)] text-sm font-semibold hover:bg-[var(--color-primary-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2.5 bg-primary text-white rounded-[var(--radius-control)] text-sm font-semibold hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {createSale.isPending ? "Processing..." : `Complete Sale · ${fmtCurrency(grandTotal)}`}
             </button>

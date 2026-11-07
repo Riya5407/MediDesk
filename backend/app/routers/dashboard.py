@@ -37,3 +37,12 @@ async def get_stock_alerts(
 ):
     """Batches not in_stock, worst status first."""
     return await dash_repo.get_stock_alerts(conn, limit=limit)
+
+
+@router.get("/category-stock")
+async def get_category_stock(
+    conn: AsyncConnection = Depends(get_db),
+    _user: dict = Depends(require_roles("admin", "pharmacist", "cashier")),
+):
+    """Available stock units grouped by category."""
+    return await dash_repo.get_category_stock(conn)

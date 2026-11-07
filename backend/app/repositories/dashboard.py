@@ -127,3 +127,21 @@ async def get_stock_alerts(conn: AsyncConnection, limit: int = 10) -> List[Dict[
     rows = await cur.fetchall()
     return [dict(r) for r in rows]
 
+
+async def get_category_stock(conn: AsyncConnection) -> List[Dict[str, Any]]:
+    """Return total available medicine units grouped by medicine category, excluding expired and zero-stock batches."""
+    cur = await conn.execute("""
+        SELECT
+            TRIM(m.category) AS category,
+            SUM(b.qty_in_stock)::int AS total_stock
+        FROM medicine m
+        JOIN medicine_batch b ON b.med_no = m.med_no
+        WHERE b.qty_in_stock > 0
+          AND (b.exp_date IS NULL OR b.exp_date >= CURRENT_DATE)
+        GROUP BY TRIM(m.category)
+        HAVING SUM(b.qty_in_stock) > 0
+        ORDER BY total_stock DESC
+    """)
+    rows = await cur.fetchall()
+    return [dict(r) for r in rows]
+
