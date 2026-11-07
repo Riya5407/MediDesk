@@ -49,12 +49,12 @@ export default function TopBar({
         )}
 
         {/* Global search */}
-        <div className="relative w-72 sm:w-80">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+        <div className="relative w-72 sm:w-80 group">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted transition-colors group-focus-within:text-primary pointer-events-none" />
           <input
             type="text"
             placeholder="Search…"
-            className="w-full rounded-[var(--radius-control)] border border-border/80 bg-white/70 focus:bg-white py-1.5 pl-9 pr-3 text-sm placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-2xs"
+            className="w-full rounded-[var(--radius-control)] border border-white/80 bg-white/40 hover:bg-white/55 focus:bg-white/75 backdrop-blur-md py-1.5 pl-9 pr-3 text-sm text-text placeholder:text-text-muted/70 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all shadow-2xs"
           />
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function TopBar({
       {/* User profile & Logout */}
       <div className="flex items-center gap-3.5">
         {user && (
-          <div className="flex items-center gap-2.5 px-3 py-1 rounded-full bg-white/80 border border-border/80 backdrop-blur-sm shadow-2xs">
+          <div className="flex items-center gap-2.5 px-3 py-1 rounded-full bg-white/50 hover:bg-white/65 border border-white/80 backdrop-blur-md shadow-2xs transition-colors">
             <UserCircle className="w-4 h-4 text-primary shrink-0" />
             <span className="font-semibold text-text text-xs tracking-tight">{user.username}</span>
             <span
@@ -78,7 +78,7 @@ export default function TopBar({
         <button
           onClick={handleLogout}
           disabled={logoutMutation.isPending}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-control)] text-xs font-medium text-text-muted hover:text-coral hover:bg-coral-tint border border-border/80 hover:border-coral/30 transition-all cursor-pointer bg-white/70 shadow-2xs"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-control)] text-xs font-medium text-text-muted hover:text-coral hover:bg-coral-tint border border-white/70 hover:border-coral/30 transition-all cursor-pointer bg-white/45 hover:bg-white/70 backdrop-blur-md shadow-2xs"
           title="Sign out of MediDeck"
         >
           <LogOut className="w-3.5 h-3.5" />

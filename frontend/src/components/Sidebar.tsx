@@ -78,7 +78,7 @@ export default function Sidebar({
     >
       {/* Brand Header */}
       <div
-        className={`relative flex items-center border-b border-border/80 h-16 shrink-0 bg-white/40 transition-all ${
+        className={`relative flex items-center border-b border-white/60 h-16 shrink-0 bg-white/15 transition-all ${
           isCollapsed ? "justify-center px-0" : "justify-between px-3.5"
         }`}
       >
@@ -160,7 +160,7 @@ export default function Sidebar({
 
       {/* Anchored Profile & Logout Footer */}
       {user && (
-        <div className="p-3 border-t border-border/80 bg-white/40 mt-auto shrink-0">
+        <div className="p-3 border-t border-white/60 bg-white/15 mt-auto shrink-0">
           <div className={`flex items-center ${isCollapsed ? "justify-center" : "justify-between"} gap-2`}>
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-8 h-8 rounded-full bg-sage flex items-center justify-center text-primary font-semibold text-xs border border-sage-accent/30 shrink-0">
