@@ -71,16 +71,16 @@ const ACCENT_BG: Record<string, string> = {
 
 function KpiCard({ label, value, icon, accent = "primary", loading }: KpiCardProps) {
   return (
-    <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] flex items-center gap-4">
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${ACCENT_BG[accent]}`}>
+    <div className="glass-kpi glass-panel-interactive rounded-[var(--radius-card)] p-5 flex items-center gap-4 cursor-default">
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-xs ${ACCENT_BG[accent]}`}>
         {icon}
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-medium text-text-muted uppercase tracking-wide">{label}</p>
+        <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">{label}</p>
         {loading ? (
-          <div className="h-7 w-20 bg-bg animate-pulse rounded mt-1" />
+          <div className="h-7 w-20 bg-mint/40 animate-pulse rounded mt-1" />
         ) : (
-          <p className="text-2xl font-bold text-text">{value}</p>
+          <p className="text-2xl font-bold text-text tracking-tight">{value}</p>
         )}
       </div>
     </div>
@@ -114,7 +114,7 @@ export default function Dashboard() {
         </div>
         <button
           onClick={() => refetchSum()}
-          className="inline-flex items-center gap-2 px-3 py-1.5 border border-border rounded-[var(--radius-control)] text-sm text-text-muted hover:text-text hover:bg-bg transition-colors"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-border/80 rounded-[var(--radius-control)] text-sm font-medium text-text-muted hover:text-text bg-white/60 hover:bg-white shadow-xs transition-all cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
@@ -168,18 +168,18 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Sales Trend Chart */}
-        <div className="xl:col-span-2 rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)]">
+        <div className="xl:col-span-2 glass-panel rounded-[var(--radius-card)] p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold text-text">Sales Trend</h2>
-            <div className="flex gap-1">
+            <div className="flex gap-1.5">
               {[7, 14, 30].map((d) => (
                 <button
                   key={d}
                   onClick={() => setTrendDays(d)}
-                  className={`px-2.5 py-1 rounded-[var(--radius-control)] text-xs font-medium transition-colors ${
+                  className={`px-3 py-1 rounded-[var(--radius-control)] text-xs font-medium transition-all cursor-pointer ${
                     trendDays === d
-                      ? "bg-primary text-white"
-                      : "border border-border text-text-muted hover:text-text hover:bg-bg"
+                      ? "bg-primary text-white shadow-xs shadow-primary/25 font-semibold"
+                      : "border border-white/80 bg-white/50 text-text-muted hover:text-text hover:bg-white/80"
                   }`}
                 >
                   {d}d
@@ -189,7 +189,7 @@ export default function Dashboard() {
           </div>
 
           {trendLoading ? (
-            <div className="h-48 bg-bg animate-pulse rounded-[var(--radius-control)]" />
+            <div className="h-48 bg-mint/30 animate-pulse rounded-[var(--radius-control)]" />
           ) : !trend?.length ? (
             <div className="h-48 flex items-center justify-center text-sm text-text-muted">No sales data.</div>
           ) : (
@@ -197,8 +197,8 @@ export default function Dashboard() {
               <AreaChart data={trend} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
                 <defs>
                   <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#075E5A" stopOpacity={0.18} />
-                    <stop offset="95%" stopColor="#075E5A" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#087E78" stopOpacity={0.22} />
+                    <stop offset="95%" stopColor="#087E78" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
@@ -221,18 +221,21 @@ export default function Dashboard() {
                   labelFormatter={(label: any) => fmtShortDate(String(label))}
                   contentStyle={{
                     borderRadius: "var(--radius-card)",
-                    border: "1px solid var(--color-border)",
+                    border: "1px solid rgba(255, 255, 255, 0.9)",
+                    backgroundColor: "rgba(255, 255, 255, 0.92)",
+                    backdropFilter: "blur(16px)",
+                    boxShadow: "0 10px 25px -4px rgba(8, 126, 120, 0.12)",
                     fontSize: "12px",
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="total"
-                  stroke="#075E5A"
+                  stroke="#087E78"
                   strokeWidth={2}
                   fill="url(#trendGrad)"
                   dot={false}
-                  activeDot={{ r: 4, fill: "#075E5A" }}
+                  activeDot={{ r: 4, fill: "#087E78" }}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -240,15 +243,15 @@ export default function Dashboard() {
         </div>
 
         {/* Stock Alerts */}
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface shadow-[var(--shadow-card)] flex flex-col">
-          <div className="px-5 py-4 border-b border-border flex items-center gap-2">
+        <div className="glass-panel rounded-[var(--radius-card)] flex flex-col overflow-hidden">
+          <div className="px-5 py-4 border-b border-white/60 flex items-center gap-2 bg-white/40">
             <AlertTriangle className="w-4 h-4 text-amber-600" />
             <h2 className="text-base font-semibold text-text">Stock Alerts</h2>
           </div>
           {alertsLoading ? (
             <div className="p-4 space-y-3">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-10 bg-bg animate-pulse rounded" />
+                <div key={i} className="h-10 bg-mint/30 animate-pulse rounded" />
               ))}
             </div>
           ) : !alerts?.length ? (
@@ -258,9 +261,9 @@ export default function Dashboard() {
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-border overflow-y-auto max-h-72">
+            <div className="divide-y divide-border/40 overflow-y-auto max-h-72">
               {alerts.map((alert) => (
-                <div key={alert.batch_no} className="px-4 py-3 flex items-center justify-between gap-3">
+                <div key={alert.batch_no} className="px-4 py-3 flex items-center justify-between gap-3 hover:bg-white/45 transition-colors">
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-text truncate">{alert.med_name}</p>
                     <p className="text-xs text-text-muted">
@@ -276,13 +279,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Recent Sales */}
-      <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden shadow-[var(--shadow-card)]">
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+      {/* Recent Sales (Level 3: dense table with mostly opaque backdrop for readability) */}
+      <div className="glass-table-container rounded-[var(--radius-card)] overflow-hidden">
+        <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between bg-white/40">
           <h2 className="text-base font-semibold text-text">Recent Sales</h2>
           <a
             href="/sales"
-            className="text-xs text-primary hover:underline font-medium"
+            className="text-xs text-primary hover:underline font-semibold"
           >
             View all →
           </a>
@@ -290,7 +293,7 @@ export default function Dashboard() {
         {salesLoading ? (
           <div className="p-4 space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-10 bg-bg animate-pulse rounded" />
+              <div key={i} className="h-10 bg-mint/30 animate-pulse rounded" />
             ))}
           </div>
         ) : !recentSales?.items?.length ? (
@@ -298,7 +301,7 @@ export default function Dashboard() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-bg border-b border-border text-xs uppercase text-text-muted tracking-wider">
+              <thead className="glass-table-header border-b border-border/70 text-xs uppercase text-text-muted font-semibold tracking-wider">
                 <tr>
                   <th className="px-5 py-3 text-left">Bill #</th>
                   <th className="px-5 py-3 text-left">Date</th>
@@ -308,15 +311,15 @@ export default function Dashboard() {
                   <th className="px-5 py-3 text-right">Total</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="glass-table-body divide-y divide-border/50">
                 {recentSales.items.map((sale) => (
-                  <tr key={sale.bill_no} className="hover:bg-mint/20 transition-colors">
+                  <tr key={sale.bill_no} className="hover:bg-mint/35 transition-colors">
                     <td className="px-5 py-3 font-mono text-text">#{sale.bill_no}</td>
                     <td className="px-5 py-3 text-text-muted">{fmtDate(sale.sale_date)}</td>
                     <td className="px-5 py-3 text-text">{sale.cust_name || <span className="italic text-text-muted">Walk-in</span>}</td>
                     <td className="px-5 py-3 text-text">{sale.emp_name || "—"}</td>
                     <td className="px-5 py-3">
-                      <span className="inline-block px-2 py-0.5 text-xs rounded border border-border bg-bg text-text">
+                      <span className="inline-block px-2 py-0.5 text-xs rounded border border-border/70 bg-white/90 text-text shadow-xs">
                         {sale.payment_mode}
                       </span>
                     </td>

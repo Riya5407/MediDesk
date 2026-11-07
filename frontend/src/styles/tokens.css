@@ -21,19 +21,32 @@
   --color-text-muted: #64748B;       /* Secondary slate */
   --color-border: #E1EBEA;           /* Subtle clinical border */
 
-  /* Glassmorphism System */
-  --glass-bg: rgba(255, 255, 255, 0.82);
-  --glass-bg-hover: rgba(255, 255, 255, 0.94);
-  --glass-border: rgba(8, 126, 120, 0.09);
-  --glass-border-highlight: rgba(255, 255, 255, 0.85);
-  --glass-blur: 14px;
-  --glass-shadow: 0 4px 20px -2px rgba(8, 126, 120, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
-  --glass-shadow-hover: 0 8px 30px -4px rgba(8, 126, 120, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+  /* Glassmorphism System — Tiered Visual Hierarchy */
+  /* Level 1: Shell (Sidebar & Topbar) */
+  --glass-shell-bg: rgba(255, 255, 255, 0.62);
+  --glass-header-bg: rgba(255, 255, 255, 0.65);
+  --glass-shell-blur: 22px;
+
+  /* Level 2: Content Panels & KPI Cards */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-kpi-bg: rgba(255, 255, 255, 0.52);
+  --glass-panel-bg: rgba(255, 255, 255, 0.58);
+  --glass-bg-hover: rgba(255, 255, 255, 0.72);
+  --glass-blur: 20px;
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-border-hairline: rgba(8, 126, 120, 0.10);
+  --glass-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  --glass-shadow: 0 10px 30px -5px rgba(8, 126, 120, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.02);
+  --glass-shadow-hover: 0 16px 36px -6px rgba(8, 126, 120, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+
+  /* Level 3: Dense Data Areas (Tables) */
+  --glass-table-bg: rgba(255, 255, 255, 0.82);
+  --glass-table-header-bg: rgba(255, 255, 255, 0.92);
 
   /* Shape and Depth */
   --radius-card: 16px;
   --radius-control: 10px;
-  --shadow-card: 0 4px 20px -2px rgba(8, 126, 120, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  --shadow-card: var(--glass-shadow);
 
   /* Layout */
   --sidebar-width-expanded: 250px;
@@ -41,6 +54,6 @@
   --sidebar-width: 250px;
 
   /* Animation */
-  --transition-smooth: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 

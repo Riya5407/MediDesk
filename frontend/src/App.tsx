@@ -24,7 +24,7 @@ export default function App() {
   // Initial authentication check loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-bg gap-3">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent gap-3">
         <div className="flex items-center gap-2">
           <img
             src="/logo.png"
@@ -53,7 +53,7 @@ export default function App() {
 
   // Authenticated application layout with role-based route guards
   return (
-    <div className="flex min-h-screen bg-bg text-text">
+    <div className="flex min-h-screen bg-transparent text-text">
       <Sidebar
         isCollapsed={isSidebarCollapsed}
         onToggle={() => setIsSidebarCollapsed((prev) => !prev)}

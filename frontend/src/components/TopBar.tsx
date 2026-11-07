@@ -31,14 +31,14 @@ export default function TopBar({
   };
 
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-white/80 backdrop-blur-md px-6 h-16 shrink-0 transition-colors">
+    <header className="glass-header sticky top-0 z-20 flex items-center justify-between px-6 h-16 shrink-0 transition-colors">
       <div className="flex items-center gap-3">
         {onToggleSidebar && (
           <button
             type="button"
             onClick={onToggleSidebar}
             aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className="p-2 rounded-[var(--radius-control)] text-text-muted hover:text-primary hover:bg-mint/50 transition-colors lg:hidden cursor-pointer"
+            className="p-2 rounded-[var(--radius-control)] text-text-muted hover:text-primary hover:bg-white/70 transition-colors lg:hidden cursor-pointer"
           >
             {isSidebarCollapsed ? (
               <PanelLeftOpen className="w-5 h-5" />
@@ -54,7 +54,7 @@ export default function TopBar({
           <input
             type="text"
             placeholder="Search…"
-            className="w-full rounded-[var(--radius-control)] border border-border/80 bg-bg/80 py-1.5 pl-9 pr-3 text-sm placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+            className="w-full rounded-[var(--radius-control)] border border-white/80 bg-white/50 focus:bg-white py-1.5 pl-9 pr-3 text-sm placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-xs"
           />
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function TopBar({
       {/* User profile & Logout */}
       <div className="flex items-center gap-3.5">
         {user && (
-          <div className="flex items-center gap-2.5 px-3 py-1 rounded-full bg-white/80 border border-border shadow-xs">
+          <div className="flex items-center gap-2.5 px-3 py-1 rounded-full bg-white/60 border border-white/80 backdrop-blur-sm shadow-xs">
             <UserCircle className="w-4 h-4 text-primary shrink-0" />
             <span className="font-semibold text-text text-xs tracking-tight">{user.username}</span>
             <span
@@ -78,7 +78,7 @@ export default function TopBar({
         <button
           onClick={handleLogout}
           disabled={logoutMutation.isPending}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-control)] text-xs font-medium text-text-muted hover:text-red hover:bg-red-tint/60 border border-border/80 hover:border-red/20 transition-all cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-control)] text-xs font-medium text-text-muted hover:text-red hover:bg-red-tint/70 border border-white/80 hover:border-red/20 transition-all cursor-pointer bg-white/50 shadow-xs"
           title="Sign out of MediDeck"
         >
           <LogOut className="w-3.5 h-3.5" />

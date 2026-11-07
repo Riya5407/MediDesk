@@ -67,7 +67,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className="fixed top-0 left-0 h-screen flex flex-col z-30 bg-white/90 backdrop-blur-xl border-r border-border transition-[width] duration-200 ease-out shadow-[0_0_15px_rgba(8,126,120,0.03)]"
+      className="glass-sidebar fixed top-0 left-0 h-screen flex flex-col z-30 transition-[width] duration-200 ease-out"
       style={{
         width: isCollapsed
           ? "var(--sidebar-width-collapsed, 72px)"
@@ -75,7 +75,7 @@ export default function Sidebar({
       }}
     >
       {/* Brand Header */}
-      <div className="flex items-center justify-between px-4 py-4 border-b border-border/80 h-16 shrink-0">
+      <div className="flex items-center justify-between px-4 py-4 border-b border-white/60 h-16 shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
           <img
             src="/logo.png"
@@ -97,7 +97,7 @@ export default function Sidebar({
           type="button"
           onClick={handleToggle}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-mint/60 transition-colors shrink-0 cursor-pointer"
+          className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-white/80 transition-colors shrink-0 cursor-pointer"
           title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <ChevronLeft
@@ -122,8 +122,8 @@ export default function Sidebar({
                     isCollapsed ? "justify-center px-0" : ""
                   } ${
                     isActive
-                      ? "bg-primary text-white shadow-sm shadow-primary/25 font-semibold"
-                      : "text-text-muted hover:bg-mint/50 hover:text-primary"
+                      ? "bg-primary text-white shadow-sm shadow-primary/30 font-semibold"
+                      : "text-text-muted hover:bg-white/70 hover:text-primary hover:shadow-xs"
                   }`
                 }
               >
