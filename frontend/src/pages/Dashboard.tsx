@@ -22,14 +22,10 @@ import { useSales } from "../api/sales";
 import { useCurrentUser } from "../api/auth";
 import StatusBadge from "../components/StatusBadge";
 import {
-  Package,
   ShoppingCart,
   Receipt,
   AlertTriangle,
-  Clock,
-  XCircle,
   RefreshCw,
-  TrendingUp,
   Plus,
   Truck,
   ArrowUpRight,

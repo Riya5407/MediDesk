@@ -33,7 +33,6 @@ from app.routers import (
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Create the connection pool on startup if DB is reachable, close it on shutdown."""
-    import asyncio
     try:
         app.state.pool = await asyncio.wait_for(create_pool(settings.DATABASE_URL), timeout=15.0)
     except Exception:

@@ -10,7 +10,6 @@ import type { POLineInput, POReceiveLine } from "../api/purchaseOrders";
 import { useSuppliers } from "../api/suppliers";
 import { useMedicines } from "../api/medicines";
 import {
-  Search,
   Plus,
   ChevronLeft,
   ChevronRight,

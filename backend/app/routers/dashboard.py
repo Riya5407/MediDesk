@@ -1,5 +1,4 @@
 """Dashboard router — section 3 of API_SPEC.md."""
-from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from psycopg import AsyncConnection
 

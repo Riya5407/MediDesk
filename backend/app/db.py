@@ -1,5 +1,4 @@
 """Database pool and dependency for FastAPI."""
-from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from psycopg import AsyncConnection

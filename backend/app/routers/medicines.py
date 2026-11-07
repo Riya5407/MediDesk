@@ -7,7 +7,6 @@ from app.auth import require_roles
 from app.schemas.medicines import (
     MedicineCreate,
     MedicineUpdate,
-    MedicineOut,
     MedicineDetailOut,
     PaginatedMedicines,
 )

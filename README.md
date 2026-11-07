@@ -39,6 +39,8 @@ A comprehensive Pharmacy Management System designed for pharmacy staff (pharmaci
    - `docs/db/01_schema_fixes.sql` (constraints & optimizations)
    - `docs/db/02_triggers.sql` (triggers for stock & bill totals)
 
+> 📊 **Entity-Relationship Diagram**: See the complete schema diagram at [`docs/erd.png`](docs/erd.png).
+
 ---
 
 ### 2. Backend Setup

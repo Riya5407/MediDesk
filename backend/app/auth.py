@@ -1,7 +1,7 @@
 """Authentication, JWT token handling, password verification, CSRF, and RBAC."""
 import secrets
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 import argon2
 import jwt
 from fastapi import Request, Response, HTTPException, status, Depends
