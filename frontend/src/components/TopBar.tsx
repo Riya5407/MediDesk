@@ -1,7 +1,15 @@
-import { Search, LogOut, UserCircle } from "lucide-react";
+import { Search, LogOut, UserCircle, PanelLeftOpen, PanelLeftClose } from "lucide-react";
 import { useCurrentUser, useLogout } from "../api/auth";
 
-export default function TopBar() {
+interface TopBarProps {
+  isSidebarCollapsed?: boolean;
+  onToggleSidebar?: () => void;
+}
+
+export default function TopBar({
+  isSidebarCollapsed,
+  onToggleSidebar,
+}: TopBarProps) {
   const { data: user } = useCurrentUser();
   const logoutMutation = useLogout();
 
@@ -14,34 +22,51 @@ export default function TopBar() {
       case "admin":
         return "bg-primary text-white border-primary";
       case "pharmacist":
-        return "bg-mint text-primary border-primary/30";
+        return "bg-mint text-primary border-primary/25 font-semibold";
       case "cashier":
-        return "bg-[var(--color-blue-tint)] text-blue border-blue/30";
+        return "bg-blue-tint text-blue border-blue/25 font-semibold";
       default:
         return "bg-bg text-text-muted border-border";
     }
   };
 
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-surface px-6 py-3">
-      {/* Global search */}
-      <div className="relative w-80">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-        <input
-          type="text"
-          placeholder="Search…"
-          className="w-full rounded-[var(--radius-control)] border border-border bg-bg py-2 pl-10 pr-3 text-sm placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
-        />
+    <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-white/80 backdrop-blur-md px-6 h-16 shrink-0 transition-colors">
+      <div className="flex items-center gap-3">
+        {onToggleSidebar && (
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="p-2 rounded-[var(--radius-control)] text-text-muted hover:text-primary hover:bg-mint/50 transition-colors lg:hidden cursor-pointer"
+          >
+            {isSidebarCollapsed ? (
+              <PanelLeftOpen className="w-5 h-5" />
+            ) : (
+              <PanelLeftClose className="w-5 h-5" />
+            )}
+          </button>
+        )}
+
+        {/* Global search */}
+        <div className="relative w-72 sm:w-80">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+          <input
+            type="text"
+            placeholder="Search…"
+            className="w-full rounded-[var(--radius-control)] border border-border/80 bg-bg/80 py-1.5 pl-9 pr-3 text-sm placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+          />
+        </div>
       </div>
 
       {/* User profile & Logout */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3.5">
         {user && (
-          <div className="flex items-center gap-2 text-sm">
-            <UserCircle className="w-5 h-5 text-text-muted" />
-            <span className="font-semibold text-text">{user.username}</span>
+          <div className="flex items-center gap-2.5 px-3 py-1 rounded-full bg-white/80 border border-border shadow-xs">
+            <UserCircle className="w-4 h-4 text-primary shrink-0" />
+            <span className="font-semibold text-text text-xs tracking-tight">{user.username}</span>
             <span
-              className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize border ${roleBadgeStyle(
+              className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border ${roleBadgeStyle(
                 user.role
               )}`}
             >
@@ -53,7 +78,7 @@ export default function TopBar() {
         <button
           onClick={handleLogout}
           disabled={logoutMutation.isPending}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-control)] text-xs font-medium text-text-muted hover:text-red hover:bg-bg border border-border transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-control)] text-xs font-medium text-text-muted hover:text-red hover:bg-red-tint/60 border border-border/80 hover:border-red/20 transition-all cursor-pointer"
           title="Sign out of MediDeck"
         >
           <LogOut className="w-3.5 h-3.5" />

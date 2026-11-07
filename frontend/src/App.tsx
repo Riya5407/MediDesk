@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
@@ -18,6 +19,7 @@ import { Loader2 } from "lucide-react";
 
 export default function App() {
   const { data: user, isLoading } = useCurrentUser();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Initial authentication check loading state
   if (isLoading) {
@@ -52,9 +54,22 @@ export default function App() {
   // Authenticated application layout with role-based route guards
   return (
     <div className="flex min-h-screen bg-bg text-text">
-      <Sidebar />
-      <div className="flex flex-1 flex-col" style={{ marginLeft: "var(--sidebar-width)" }}>
-        <TopBar />
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        onToggle={() => setIsSidebarCollapsed((prev) => !prev)}
+      />
+      <div
+        className="flex flex-1 flex-col transition-[margin-left] duration-200 ease-out"
+        style={{
+          marginLeft: isSidebarCollapsed
+            ? "var(--sidebar-width-collapsed, 72px)"
+            : "var(--sidebar-width-expanded, 250px)",
+        }}
+      >
+        <TopBar
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
+        />
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<Dashboard />} />

@@ -1,28 +1,46 @@
 :root {
-  /* Brand */
-  --color-primary: #075E5A;        /* deep teal */
-  --color-primary-hover: #054A47;
-  --color-mint: #DDF2EB;           /* soft surface */
-  --color-bg: #FAFAF7;             /* page background (warm white) */
-  --color-surface: #FFFFFF;        /* cards */
-  --color-amber: #F3B65B;
-  --color-blue: #2F7DB5;
-  --color-red: #C8453B;
+  /* Brand Clinical Palette */
+  --color-primary: #087E78;          /* Deep teal */
+  --color-primary-hover: #066560;
+  --color-secondary: #19A99A;        /* Mint teal */
+  --color-mint: #E8F5F4;             /* Soft mint surface tint */
+  --color-mint-accent: #19A99A;
+  --color-bg: #F5F9FA;               /* Page background (crisp clinical light) */
+  --color-surface: #FFFFFF;          /* Pure white card surface */
 
-  /* Tints for badges and alerts */
-  --color-amber-tint: #FDF0DA;
-  --color-blue-tint: #E0EEF7;
-  --color-red-tint: #F8E1DF;
+  /* Semantic Alerts */
+  --color-amber: #D97706;
+  --color-amber-tint: #FEF3C7;
+  --color-blue: #0284C7;
+  --color-blue-tint: #E0F2FE;
+  --color-red: #DC2626;
+  --color-red-tint: #FEE2E2;
 
-  /* Text and lines */
-  --color-text: #17302F;
-  --color-text-muted: #5B7170;
-  --color-border: #E4E8E2;
+  /* Text and Lines */
+  --color-text: #172B36;             /* Clinical dark slate */
+  --color-text-muted: #64748B;       /* Secondary slate */
+  --color-border: #E1EBEA;           /* Subtle clinical border */
 
-  /* Shape and depth */
-  --radius-card: 12px;
-  --radius-control: 8px;
-  --shadow-card: 0 1px 2px rgba(23, 48, 47, 0.06);
-  --sidebar-width: 240px;
+  /* Glassmorphism System */
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-bg-hover: rgba(255, 255, 255, 0.94);
+  --glass-border: rgba(8, 126, 120, 0.09);
+  --glass-border-highlight: rgba(255, 255, 255, 0.85);
+  --glass-blur: 14px;
+  --glass-shadow: 0 4px 20px -2px rgba(8, 126, 120, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  --glass-shadow-hover: 0 8px 30px -4px rgba(8, 126, 120, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+
+  /* Shape and Depth */
+  --radius-card: 16px;
+  --radius-control: 10px;
+  --shadow-card: 0 4px 20px -2px rgba(8, 126, 120, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+
+  /* Layout */
+  --sidebar-width-expanded: 250px;
+  --sidebar-width-collapsed: 72px;
+  --sidebar-width: 250px;
+
+  /* Animation */
+  --transition-smooth: 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
