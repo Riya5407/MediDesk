@@ -1,160 +1,260 @@
 # MediDeck — Pharmacy Management System
 
-A comprehensive Pharmacy Management System designed for pharmacy staff (pharmacists, cashiers, and store managers). Built with **FastAPI**, **PostgreSQL** (raw SQL, trigger-driven inventory & bill totals), and **React** with **Tailwind CSS**.
+[![CI](https://github.com/your-username/medidesk/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/medidesk/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](LICENSE)
+
+A production-grade, internal dispensary operations and pharmacy management system designed for clinical staff (**Admin**, **Pharmacist**, and **Cashier**). Built with a high-performance **FastAPI** backend using raw, parameterized **psycopg 3** queries, PostgreSQL database triggers for transactional integrity, and a **React 19** frontend styled with **Tailwind CSS**.
 
 ---
 
-## 🌟 Key Features
+## 🌟 Features Overview
 
-- **Dashboard**: Live KPI summaries (revenue, bills, stock status, expiring batches), 7/14/30-day interactive sales trend charts, and real-time stock alert feeds.
-- **Medicines & Batches**: Complete catalog management, batch tracking with manufacturing & expiry dates, automated expiry status calculation, and low-stock indicators.
-- **Point of Sale (POS)**: Fast billing workflow with medicine search, automated oldest-batch selection (FIFO), line-item discounts, employee attribution, and stock deduction.
-- **Sales History**: Searchable, date-filtered transaction ledger with receipt inspection and one-click cancellation (with stock restoration via triggers).
-- **Purchase Orders**: Vendor procurement workflow from creation (`Pending`), cancellation, to inventory intake (`POST /receive`) creating batches directly.
-- **Prescriptions**: Doctor prescription records linked to customers and prescribed dosages/durations.
-- **Customers & Suppliers**: Customer purchase/prescription history and vendor phone directories.
-- **Employees**: Staff registry with role and wage details.
-- **Reports**: Analytical reports for sales by date, top-selling medicines, expired stock valuation, and vendor purchases, with **CSV export**.
+- **Executive & Operations Dashboard**: Real-time KPI summaries (medicines count, daily sales, bill volume, low stock, expiring soon, and expired units), interactive 7/14/30-day revenue trend charts, category stock distribution, and live stock alert feeds.
+- **Medicine Catalog & Inventory**: Complete catalog management with category filtering, batch tracking, manufacturing and expiry dates, remaining shelf-life calculation, and automated stock indicators.
+- **Point of Sale (POS)**: Rapid billing workflow with live medicine search, automated FIFO (First-In, First-Out) oldest-batch allocation, line discounts, employee attribution, and stock verification.
+- **Sales History & Audit**: Searchable transaction ledger with receipt inspection and administrator cancellation (trigger-driven automatic stock restoration).
+- **Vendor Procurement (Purchase Orders)**: Complete procurement cycle from creation (`Pending`), cancellation, to direct inventory intake (`POST /receive`) creating batches directly.
+- **Prescription Records**: Doctor prescriptions linked to registered customers with prescribed dosages and durations.
+- **Customer & Supplier Directories**: Patient prescription/purchase histories and vendor multi-line telephone directories.
+- **Staff Administration & RBAC**: Employee records with role-based salary masking for non-administrators.
+- **Business Intelligence & Reports**: Dedicated analytical reporting for daily sales, top-selling medicines, expired stock valuation, and supplier expenditure, with instant **CSV export**.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Python 3.12+, FastAPI, psycopg 3 (`psycopg_pool`), Pydantic v2, pytest.
-- **Database**: PostgreSQL (Raw SQL queries with parameterized statements, no ORM; trigger-enforced consistency).
-- **Frontend**: Vite, React 19, TypeScript, Tailwind CSS v4, TanStack Query, Recharts, Lucide Icons.
+| Layer | Technologies |
+|---|---|
+| **Backend** | Python 3.13 / 3.12, FastAPI, psycopg 3 (`psycopg_pool`), Pydantic v2, PyJWT, Argon2-cffi, pytest |
+| **Database** | PostgreSQL 16 (Raw parameterized SQL, zero ORM, triggers for stock and totals) |
+| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS, TanStack Query v5, Recharts, Lucide Icons |
+| **Security** | JWT HTTP-only Cookies, Double-Submit CSRF tokens, Argon2 password hashing, IP & username rate limiting |
 
 ---
 
-## 🚀 Local Development Setup
+## 🔐 Role-Based Access Control (RBAC)
 
-### 1. Database Setup
-1. Ensure PostgreSQL is installed and running locally on port `5432`.
+MediDeck implements strict role-based access control across all backend endpoints and client navigation:
+
+| Capability / Section | Admin | Pharmacist | Cashier | Notes |
+|---|:---:|:---:|:---:|---|
+| **POS Billing (New Sale)** | ✅ | ✅ | ✅ | All roles can generate sales |
+| **Sales History (View & Inspect)** | ✅ | ✅ | ✅ | Search and view previous bills |
+| **Cancel Bill (Restores Stock)** | ✅ | ❌ | ❌ | Restricted to Admin only |
+| **Medicines & Batches (View)** | ✅ | ✅ | ✅ | Catalog and stock lookup |
+| **Medicines & Batches (Manage)** | ✅ | ✅ | ❌ | Add/edit/delete restricted from Cashier |
+| **Stock Alerts Feed** | ✅ | ✅ | ❌ | Low stock / expiry warnings hidden from Cashier |
+| **Suppliers & Purchase Orders** | ✅ | ✅ | ❌ | Procurement restricted to Admin & Pharmacist |
+| **Receive Purchase Order** | ✅ | ✅ | ❌ | Creates new inventory batches directly |
+| **Prescriptions Directory** | ✅ | ✅ | ✅ | Customer prescription records |
+| **Customers Directory** | ✅ | ✅ | ✅ | Customer records and history |
+| **Staff Directory (Employees)** | ✅ | Masked | Masked | Non-admins see masked salary & phone numbers |
+| **Staff Management (Add/Edit/Delete)** | ✅ | ❌ | ❌ | Admin only |
+| **Reports: Sales by Date** | ✅ | ❌ | ✅ | Cashier & Admin |
+| **Reports: Top Medicines** | ✅ | ❌ | ✅ | Cashier & Admin |
+| **Reports: Expired Stock Valuation** | ✅ | ✅ | ❌ | Pharmacist & Admin |
+| **Reports: Purchases by Supplier** | ✅ | ❌ | ❌ | Admin only |
+
+---
+
+## ⚙️ Environment Variables
+
+### Backend (`backend/.env`)
+
+| Variable | Default / Example | Description |
+|---|---|---|
+| `DATABASE_URL` | `postgresql://postgres:postgres@localhost:5432/Pharmacy_Management` | PostgreSQL connection string |
+| `ENVIRONMENT` | `development` | `development` or `production` (disables docs in production) |
+| `AUTH_ENABLED` | `true` | Enforces authentication (must be `true` in production) |
+| `JWT_SECRET` | *(Random 32+ char secret)* | Secret key for signing session JWT tokens |
+| `ADMIN_PASSWORD_HASH` | *(Argon2 hash)* | Argon2 password hash for the `admin` account |
+| `PHARMACIST_PASSWORD_HASH` | *(Argon2 hash)* | Argon2 password hash for the `pharmacist` account |
+| `CASHIER_PASSWORD_HASH` | *(Argon2 hash)* | Argon2 password hash for the `cashier` account |
+| `COOKIE_SECURE` | `false` | Set to `true` in production (enforces HTTPS-only cookies) |
+| `LOW_STOCK_THRESHOLD` | `20` | Threshold below which medicines/batches trigger low-stock alerts |
+| `EXPIRY_WARNING_DAYS` | `30` | Days window to alert for expiring batches |
+| `PAYMENT_MODES` | `Cash,Card,UPI` | Comma-separated list of accepted payment modes |
+| `CORS_ORIGINS` | `http://localhost:5173,http://localhost:3000` | Allowed origins for CORS |
+| `FORWARDED_ALLOW_IPS` | `*` | Trusted proxy addresses for proxy-aware rate limiting |
+
+### Frontend (`frontend/.env`)
+
+| Variable | Default / Example | Description |
+|---|---|---|
+| `VITE_API_URL` | `http://127.0.0.1:8000` | Backend base URL (**no trailing slash**) |
+
+---
+
+## 🔑 Password Hash Generation
+
+MediDeck uses **Argon2id** password hashing. To generate new password hashes for staff accounts, run the following Python command in your terminal:
+
+```bash
+python -c "from argon2 import PasswordHasher; ph = PasswordHasher(); print(ph.hash('YourSecretPassword'))"
+```
+
+Copy the generated hash string into your `backend/.env` file under the corresponding `*_PASSWORD_HASH` variable.
+
+Default dev credentials:
+- **Admin**: `admin` / `Admin@123`
+- **Pharmacist**: `pharmacist` / `Pharm@123`
+- **Cashier**: `cashier` / `Cashier@123`
+
+---
+
+## 🚀 Local Setup Guide
+
+### 1. Database Setup (All Platforms)
+
+1. Ensure PostgreSQL 14+ is installed and running on `localhost:5432`.
 2. Create the database:
    ```sql
    CREATE DATABASE "Pharmacy_Management";
    ```
-3. Run the migration and schema scripts in order:
+3. Execute the schema migrations in order:
    - `docs/db/pharmacy_schema.sql` (schema & sample data)
-   - `docs/db/01_schema_fixes.sql` (constraints & optimizations)
-   - `docs/db/02_triggers.sql` (triggers for stock & bill totals)
+   - `docs/db/01_schema_fixes.sql` (constraints & indexing)
+   - `docs/db/02_triggers.sql` (inventory & total calculation triggers)
 
-> 📊 **Entity-Relationship Diagram**: See the complete schema diagram at [`docs/erd.png`](docs/erd.png).
+> 📊 **Entity-Relationship Diagram**: Inspect the complete schema diagram at [`docs/erd.png`](docs/erd.png).
 
 ---
 
-### 2. Backend Setup
-1. Open PowerShell and navigate to the `backend/` directory:
-   ```powershell
-   cd backend
-   ```
-2. Create and activate a Python virtual environment:
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
-3. Install dependencies:
-   ```powershell
+### 2. Windows Setup
+
+#### Backend:
+```powershell
+# Navigate to backend directory
+cd backend
+
+# Create virtual environment with Python 3.13
+py -3.13 -m venv .venv
+
+# Activate virtual environment
+.\.venv\Scripts\Activate.ps1
+
+# Install development & test dependencies
+pip install -r requirements-dev.txt
+
+# Configure environment
+Copy-Item .env.example .env
+# Edit .env with your PostgreSQL credentials
+
+# Run tests
+pytest -v tests/
+
+# Start server
+python run_server.py
+```
+*Backend runs at `http://127.0.0.1:8000`.*
+
+#### Frontend:
+```powershell
+# In a new PowerShell window, navigate to frontend
+cd frontend
+
+# Install dependencies
+npm install
+
+# Run frontend tests
+npm test
+
+# Build and verify typecheck
+npm run build
+
+# Start development server
+npm run dev
+```
+*Frontend runs at `http://localhost:5173`.*
+
+---
+
+### 3. macOS / Linux Setup
+
+#### Backend:
+```bash
+# Navigate to backend directory
+cd backend
+
+# Create virtual environment
+python3 -m venv .venv
+
+# Activate virtual environment
+source .venv/bin/activate
+
+# Install development & test dependencies
+pip install -r requirements-dev.txt
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your PostgreSQL credentials
+
+# Run tests
+pytest -v tests/
+
+# Start server
+python run_server.py
+```
+
+#### Frontend:
+```bash
+# In a new terminal window, navigate to frontend
+cd frontend
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Build and verify typecheck
+npm run build
+
+# Start development server
+npm run dev
+```
+
+---
+
+## ☁️ Deployment Guide
+
+### Backend Deployment (Render, Railway, or AWS)
+1. Set the root directory to `backend`.
+2. Build command:
+   ```bash
    pip install -r requirements.txt
    ```
-4. Configure your environment:
-   - Copy `.env.example` to `.env`:
-     ```powershell
-     Copy-Item .env.example .env
-     ```
-   - Update `DATABASE_URL` with your PostgreSQL username and password:
-     ```env
-     DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/Pharmacy_Management
-     ```
-5. Run the development server:
-   ```powershell
-   python run_server.py
+3. Start command:
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'
    ```
-   *The backend will be live at `http://127.0.0.1:8000` (docs at `http://127.0.0.1:8000/docs`).*
+4. Set production environment variables:
+   - `ENVIRONMENT=production` (automatically disables `/docs`, `/redoc`, and `/openapi.json`)
+   - `COOKIE_SECURE=true` (enforces `SameSite=None; Secure` cookies for cross-origin hosting)
+   - `DATABASE_URL`: Your managed cloud PostgreSQL connection URL (e.g. Neon, Supabase, Render)
+   - `JWT_SECRET`: A secure, random 32+ character string
+   - `CORS_ORIGINS`: Your production frontend URL (e.g. `https://medideck.vercel.app`)
 
-6. Run the test suite:
-   ```powershell
-   pytest -v tests/
-   ```
+### Frontend Deployment (Vercel, Netlify, or Cloudflare Pages)
+1. Set the root directory to `frontend`.
+2. Build command: `npm run build`
+3. Output directory: `dist`
+4. Set environment variable:
+   - `VITE_API_URL`: Your deployed backend URL (e.g. `https://medideck-api.onrender.com`).
+   > ⚠️ **Important**: Do **NOT** include a trailing slash in `VITE_API_URL` (e.g., use `https://api.example.com`, not `https://api.example.com/`).
 
 ---
 
-### 3. Frontend Setup
-1. Open a new terminal and navigate to the `frontend/` directory:
-   ```powershell
-   cd frontend
-   ```
-2. Install dependencies:
-   ```powershell
-   npm install
-   ```
-3. Start the Vite development server:
-   ```powershell
-   npm run dev
-   ```
-4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+## ⚠️ Important Database Architecture Note
+
+Stock deduction and bill totals are strictly maintained by **PostgreSQL database triggers**:
+- `medicine_batch.qty_in_stock` is updated automatically when sales lines are created, when sales are cancelled, and when purchase orders are received.
+- `sale.total_amt` is computed automatically from line items.
+
+**Never write to `medicine_batch.qty_in_stock` or `sale.total_amt` from application code.** All writes touching multiple tables run within single, atomic database transactions.
 
 ---
 
-## ☁️ Public Cloud Deployment Guide
+## 📄 License
 
-To deploy this project online with live database records:
-
-### Step 1: Cloud PostgreSQL Database
-Use a managed cloud PostgreSQL provider such as **Neon.tech**, **Supabase**, or **Render**:
-1. Create a free PostgreSQL instance.
-2. Open its SQL Query Console and execute the three files in order:
-   1. `docs/db/pharmacy_schema.sql`
-   2. `docs/db/01_schema_fixes.sql`
-   3. `docs/db/02_triggers.sql`
-3. Copy the public connection string:
-   `postgresql://username:password@hostname:5432/dbname?sslmode=require`
-
----
-
-### Step 2: Deploy Backend (Render / Railway)
-1. Push your repository to GitHub.
-2. In [Render](https://render.com) or [Railway](https://railway.app), create a new **Web Service** from your GitHub repo.
-3. Configure the service:
-   - **Root Directory**: `backend`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-4. Set Environment Variables:
-   - `DATABASE_URL`: *(Your cloud database connection string from Step 1)*
-   - `CORS_ORIGINS`: `https://your-frontend-domain.vercel.app` *(or `*` temporarily)*
-   - `LOW_STOCK_THRESHOLD`: `20`
-   - `EXPIRY_WARNING_DAYS`: `30`
-   - `PAYMENT_MODES`: `Cash,Card,UPI`
-
----
-
-### Step 3: Deploy Frontend (Vercel / Netlify / Render)
-1. In [Vercel](https://vercel.com) or [Netlify](https://netlify.com), import your repository.
-2. Configure settings:
-   - **Root Directory**: `frontend`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-3. Set Environment Variable:
-   - `VITE_API_URL`: `https://your-backend-service.onrender.com`
-4. Deploy! Your MediDeck application is now live on the internet.
-
----
-
-## 🧪 Testing
-
-- **Backend Tests (36 tests)**:
-  ```powershell
-  cd backend
-  pytest -v tests/
-  ```
-- **Frontend Tests**:
-  ```powershell
-  cd frontend
-  npm test
-  ```
-- **Frontend Typecheck & Production Build**:
-  ```powershell
-  cd frontend
-  npm run build
-  ```
-
+This project is licensed under the [MIT License](LICENSE).
