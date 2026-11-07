@@ -48,11 +48,12 @@ export function useSalesTrend(days: number = 7) {
   });
 }
 
-export function useStockAlerts(limit: number = 10) {
+export function useStockAlerts(limit: number = 10, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["dashboard", "stock-alerts", limit],
     queryFn: () => request<StockAlert[]>(`/api/dashboard/stock-alerts?limit=${limit}`),
     refetchInterval: 60_000,
+    enabled: options?.enabled ?? true,
   });
 }
 

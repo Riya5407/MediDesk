@@ -51,36 +51,40 @@ function buildQs(params: ReportParams & { limit?: number }): string {
   return qs.toString() ? `?${qs.toString()}` : "";
 }
 
-export function useSalesByDate(params: ReportParams) {
+export function useSalesByDate(params: ReportParams, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["reports", "sales-by-date", params],
     queryFn: () =>
       request<SalesByDateRow[]>(`/api/reports/sales-by-date${buildQs(params)}`),
+    enabled: options?.enabled ?? true,
   });
 }
 
-export function useTopMedicines(params: ReportParams & { limit?: number }) {
+export function useTopMedicines(params: ReportParams & { limit?: number }, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["reports", "top-medicines", params],
     queryFn: () =>
       request<TopMedicineRow[]>(`/api/reports/top-medicines${buildQs(params)}`),
+    enabled: options?.enabled ?? true,
   });
 }
 
-export function useExpiredStock() {
+export function useExpiredStock(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["reports", "expired-stock"],
     queryFn: () => request<ExpiredStockResponse>("/api/reports/expired-stock"),
+    enabled: options?.enabled ?? true,
   });
 }
 
-export function usePurchasesBySupplier(params: ReportParams) {
+export function usePurchasesBySupplier(params: ReportParams, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["reports", "purchases-by-supplier", params],
     queryFn: () =>
       request<PurchasesBySupplierRow[]>(
         `/api/reports/purchases-by-supplier${buildQs(params)}`
       ),
+    enabled: options?.enabled ?? true,
   });
 }
 

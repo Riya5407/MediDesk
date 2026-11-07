@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSales, useSale, useCancelSale } from "../api/sales";
+import { useCurrentUser } from "../api/auth";
 import {
   Search,
   ChevronLeft,
@@ -38,6 +39,9 @@ export default function SalesHistory() {
     page,
     page_size: pageSize,
   });
+
+  const { data: user } = useCurrentUser();
+  const isAdmin = user?.role === "admin";
 
   const { data: saleDetail, isLoading: detailLoading } = useSale(viewBillNo ?? undefined);
   const cancelMutation = useCancelSale();
@@ -173,13 +177,15 @@ export default function SalesHistory() {
                       >
                         <Eye className="w-4 h-4 inline" />
                       </button>
-                      <button
-                        onClick={() => setCancelCandidate(sale.bill_no)}
-                        className="p-1 text-text-muted hover:text-coral transition-colors"
-                        title="Cancel bill"
-                      >
-                        <Trash2 className="w-4 h-4 inline" />
-                      </button>
+                      {isAdmin && (
+                        <button
+                          onClick={() => setCancelCandidate(sale.bill_no)}
+                          className="p-1 text-text-muted hover:text-coral transition-colors"
+                          title="Cancel bill"
+                        >
+                          <Trash2 className="w-4 h-4 inline" />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -290,12 +296,14 @@ export default function SalesHistory() {
                 </div>
 
                 <div className="flex justify-end gap-3 pt-3 border-t border-border/60">
-                  <button
-                    onClick={() => { setCancelCandidate(viewBillNo); setViewBillNo(null); }}
-                    className="px-4 py-2 bg-coral text-white rounded-[var(--radius-control)] text-sm font-medium hover:bg-coral/90 transition-colors shadow-xs shadow-coral/25"
-                  >
-                    Cancel Bill
-                  </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => { setCancelCandidate(viewBillNo); setViewBillNo(null); }}
+                      className="px-4 py-2 bg-coral text-white rounded-[var(--radius-control)] text-sm font-medium hover:bg-coral/90 transition-colors shadow-xs shadow-coral/25"
+                    >
+                      Cancel Bill
+                    </button>
+                  )}
                   <button
                     onClick={() => setViewBillNo(null)}
                     className="px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-white/80 transition-colors"

@@ -8,6 +8,7 @@ import {
 } from "../api/medicines";
 import type { Medicine, MedicineInput } from "../api/types";
 import StatusBadge from "../components/StatusBadge";
+import { useCurrentUser } from "../api/auth";
 import {
   Search,
   Plus,
@@ -20,6 +21,9 @@ import {
 } from "lucide-react";
 
 export default function Medicines() {
+  const { data: user } = useCurrentUser();
+  const canManage = user?.role === "admin" || user?.role === "pharmacist";
+
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -159,13 +163,15 @@ export default function Medicines() {
             Manage pharmaceutical catalog, dosage units, real-time stock levels, and MRPs
           </p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs md:text-sm font-semibold rounded-[var(--radius-control)] hover:bg-primary-hover transition-all shadow-xs shadow-primary/25 cursor-pointer self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          Add Medicine
-        </button>
+        {canManage && (
+          <button
+            onClick={openAddModal}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs md:text-sm font-semibold rounded-[var(--radius-control)] hover:bg-primary-hover transition-all shadow-xs shadow-primary/25 cursor-pointer self-start sm:self-auto"
+          >
+            <Plus className="w-4 h-4" />
+            Add Medicine
+          </button>
+        )}
       </div>
 
       {/* Filter and Search Bar */}
@@ -283,20 +289,26 @@ export default function Medicines() {
                     </td>
                     <td className="px-6 py-3.5 text-text-muted text-xs">{formatDate(med.nearest_expiry)}</td>
                     <td className="px-6 py-3.5 text-right space-x-1">
-                      <button
-                        onClick={() => openEditModal(med)}
-                        className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-sage/50 transition-colors cursor-pointer"
-                        title="Edit medicine"
-                      >
-                        <Edit2 className="w-3.5 h-3.5 inline" />
-                      </button>
-                      <button
-                        onClick={() => setDeleteCandidate(med)}
-                        className="p-1.5 rounded-lg text-text-muted hover:text-coral hover:bg-coral-tint transition-colors cursor-pointer"
-                        title="Delete medicine"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 inline" />
-                      </button>
+                      {canManage ? (
+                        <>
+                          <button
+                            onClick={() => openEditModal(med)}
+                            className="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-sage/50 transition-colors cursor-pointer"
+                            title="Edit medicine"
+                          >
+                            <Edit2 className="w-3.5 h-3.5 inline" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteCandidate(med)}
+                            className="p-1.5 rounded-lg text-text-muted hover:text-coral hover:bg-coral-tint transition-colors cursor-pointer"
+                            title="Delete medicine"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 inline" />
+                          </button>
+                        </>
+                      ) : (
+                        <span className="text-text-muted text-xs">—</span>
+                      )}
                     </td>
                   </tr>
                 ))}

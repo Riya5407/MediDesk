@@ -8,6 +8,7 @@ import {
 import { useMedicines } from "../api/medicines";
 import type { Batch, BatchInput } from "../api/types";
 import StatusBadge from "../components/StatusBadge";
+import { useCurrentUser } from "../api/auth";
 import {
   Search,
   Plus,
@@ -24,6 +25,9 @@ import {
 } from "lucide-react";
 
 export default function Batches() {
+  const { data: user } = useCurrentUser();
+  const canManage = user?.role === "admin" || user?.role === "pharmacist";
+
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
@@ -162,13 +166,15 @@ export default function Batches() {
             Track batches, monitor upcoming expirations, and maintain stock health.
           </p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-[var(--radius-control)] hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          Add Batch
-        </button>
+        {canManage && (
+          <button
+            onClick={openAddModal}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-[var(--radius-control)] hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 self-start sm:self-auto"
+          >
+            <Plus className="w-4 h-4" />
+            Add Batch
+          </button>
+        )}
       </div>
 
       {/* KPI Summary Cards */}
@@ -328,20 +334,26 @@ export default function Batches() {
                         <StatusBadge status={batch.status} />
                       </td>
                       <td className="px-6 py-4 text-right space-x-2">
-                        <button
-                          onClick={() => openEditModal(batch)}
-                          className="p-1 text-text-muted hover:text-primary transition-colors"
-                          title="Edit batch"
-                        >
-                          <Edit2 className="w-4 h-4 inline" />
-                        </button>
-                        <button
-                          onClick={() => setDeleteCandidate(batch)}
-                          className="p-1 text-text-muted hover:text-coral transition-colors"
-                          title="Delete batch"
-                        >
-                          <Trash2 className="w-4 h-4 inline" />
-                        </button>
+                        {canManage ? (
+                          <>
+                            <button
+                              onClick={() => openEditModal(batch)}
+                              className="p-1 text-text-muted hover:text-primary transition-colors cursor-pointer"
+                              title="Edit batch"
+                            >
+                              <Edit2 className="w-4 h-4 inline" />
+                            </button>
+                            <button
+                              onClick={() => setDeleteCandidate(batch)}
+                              className="p-1 text-text-muted hover:text-coral transition-colors cursor-pointer"
+                              title="Delete batch"
+                            >
+                              <Trash2 className="w-4 h-4 inline" />
+                            </button>
+                          </>
+                        ) : (
+                          <span className="text-text-muted text-xs">—</span>
+                        )}
                       </td>
                     </tr>
                   );

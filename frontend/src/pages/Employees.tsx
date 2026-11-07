@@ -6,6 +6,7 @@ import {
   useDeleteEmployee,
 } from "../api/employees";
 import type { Employee, EmployeeInput } from "../api/types";
+import { useCurrentUser } from "../api/auth";
 import {
   Search,
   Plus,
@@ -19,6 +20,9 @@ import {
 } from "lucide-react";
 
 export default function Employees() {
+  const { data: user } = useCurrentUser();
+  const isAdmin = user?.role === "admin";
+
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -124,13 +128,15 @@ export default function Employees() {
             Staff management, role assignments, and sales permissions.
           </p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-[var(--radius-control)] hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          Add Employee
-        </button>
+        {isAdmin && (
+          <button
+            onClick={openAddModal}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-[var(--radius-control)] hover:bg-primary-hover transition-colors shadow-xs shadow-primary/25 self-start sm:self-auto"
+          >
+            <Plus className="w-4 h-4" />
+            Add Employee
+          </button>
+        )}
       </div>
 
       <div className="glass-panel rounded-[var(--radius-card)] border border-border p-4 shadow-2xs flex flex-wrap gap-4 items-center justify-between">
@@ -205,20 +211,26 @@ export default function Employees() {
                     <td className="px-6 py-4 text-text-muted">{emp.phone_no || "—"}</td>
                     <td className="px-6 py-4 font-medium text-text">{formatCurrency(emp.salary)}</td>
                     <td className="px-6 py-4 text-right space-x-2">
-                      <button
-                        onClick={() => openEditModal(emp)}
-                        className="p-1 text-text-muted hover:text-primary transition-colors"
-                        title="Edit employee"
-                      >
-                        <Edit2 className="w-4 h-4 inline" />
-                      </button>
-                      <button
-                        onClick={() => setDeleteCandidate(emp)}
-                        className="p-1 text-text-muted hover:text-coral transition-colors"
-                        title="Delete employee"
-                      >
-                        <Trash2 className="w-4 h-4 inline" />
-                      </button>
+                      {isAdmin ? (
+                        <>
+                          <button
+                            onClick={() => openEditModal(emp)}
+                            className="p-1 text-text-muted hover:text-primary transition-colors cursor-pointer"
+                            title="Edit employee"
+                          >
+                            <Edit2 className="w-4 h-4 inline" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteCandidate(emp)}
+                            className="p-1 text-text-muted hover:text-coral transition-colors cursor-pointer"
+                            title="Delete employee"
+                          >
+                            <Trash2 className="w-4 h-4 inline" />
+                          </button>
+                        </>
+                      ) : (
+                        <span className="text-text-muted text-xs">—</span>
+                      )}
                     </td>
                   </tr>
                 ))}

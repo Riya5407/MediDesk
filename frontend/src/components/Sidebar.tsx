@@ -63,9 +63,16 @@ export default function Sidebar({
   const logoutMutation = useLogout();
   const role = user?.role || "admin";
 
-  const visibleNavItems = navItems.filter(
-    (item) => !item.roles || item.roles.includes(role)
-  );
+  const hasAccessibleReport = (r?: string) => {
+    return r === "admin" || r === "cashier" || r === "pharmacist";
+  };
+
+  const visibleNavItems = navItems.filter((item) => {
+    if (item.to === "/reports") {
+      return hasAccessibleReport(role);
+    }
+    return !item.roles || item.roles.includes(role);
+  });
 
   return (
     <aside

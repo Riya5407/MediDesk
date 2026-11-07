@@ -25,6 +25,7 @@ import {
   ShoppingCart,
   Receipt,
   AlertTriangle,
+  AlertCircle,
   RefreshCw,
   Plus,
   Truck,
@@ -59,7 +60,8 @@ export default function Dashboard() {
 
   const { data: summary, isLoading: sumLoading, refetch: refetchSum } = useDashboardSummary();
   const { data: trend, isLoading: trendLoading } = useSalesTrend(trendDays);
-  const { data: alerts, isLoading: alertsLoading } = useStockAlerts(8);
+  const canViewAlerts = user?.role === "admin" || user?.role === "pharmacist";
+  const { data: alerts, isLoading: alertsLoading, isError: alertsError } = useStockAlerts(8, { enabled: canViewAlerts });
   const { data: categoryStock, isLoading: catLoading } = useCategoryStock();
   const { data: recentSales, isLoading: salesLoading } = useSales({ page: 1, page_size: 5 });
 
@@ -444,52 +446,62 @@ export default function Dashboard() {
 
       {/* ── Section E & F: Inventory Alerts & Recent Sales ───────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: Inventory Alerts (spans 5 cols on desktop) */}
-        <div className="lg:col-span-5 glass-panel rounded-[var(--radius-card)] flex flex-col overflow-hidden">
-          <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between bg-white/40">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-600" />
-              <h2 className="text-base font-bold text-text">Inventory Alerts</h2>
+        {/* Left: Inventory Alerts (visible to Admin & Pharmacist only) */}
+        {canViewAlerts && (
+          <div className="lg:col-span-5 glass-panel rounded-[var(--radius-card)] flex flex-col overflow-hidden">
+            <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between bg-white/40">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                <h2 className="text-base font-bold text-text">Inventory Alerts</h2>
+              </div>
+              <Link to="/batches" className="text-xs text-primary hover:underline font-semibold flex items-center gap-0.5">
+                Batches <ArrowUpRight className="w-3 h-3" />
+              </Link>
             </div>
-            <Link to="/batches" className="text-xs text-primary hover:underline font-semibold flex items-center gap-0.5">
-              Batches <ArrowUpRight className="w-3 h-3" />
-            </Link>
-          </div>
 
-          {alertsLoading ? (
-            <div className="p-4 space-y-3">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-11 bg-ivory-subtle animate-pulse rounded" />
-              ))}
-            </div>
-          ) : !alerts?.length ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-              <span className="p-2.5 rounded-full bg-sage text-primary mb-2">
-                <Sparkles className="w-5 h-5" />
-              </span>
-              <p className="text-sm font-semibold text-text">All batches in good standing</p>
-              <p className="text-xs text-text-muted mt-0.5">No stockouts or immediate expiry warnings.</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-border/50 overflow-y-auto max-h-80">
-              {alerts.map((alert) => (
-                <div key={alert.batch_no} className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-white/60 transition-colors">
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-text truncate">{alert.med_name}</p>
-                    <p className="text-xs text-text-muted mt-0.5">
-                      Batch #{alert.batch_no} · <span className="font-semibold text-text">{alert.qty_in_stock}</span> units in stock
-                      {alert.exp_date ? ` · Exp: ${fmtDate(alert.exp_date)}` : ""}
-                    </p>
+            {alertsLoading ? (
+              <div className="p-4 space-y-3">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="h-11 bg-ivory-subtle animate-pulse rounded" />
+                ))}
+              </div>
+            ) : alertsError ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-coral">
+                <span className="p-2.5 rounded-full bg-coral-tint text-coral mb-2">
+                  <AlertCircle className="w-5 h-5" />
+                </span>
+                <p className="text-sm font-semibold">Failed to load inventory alerts</p>
+                <p className="text-xs text-text-muted mt-0.5">Please check your network connection or retry.</p>
+              </div>
+            ) : !alerts?.length ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+                <span className="p-2.5 rounded-full bg-sage text-primary mb-2">
+                  <Sparkles className="w-5 h-5" />
+                </span>
+                <p className="text-sm font-semibold text-text">All batches in good standing</p>
+                <p className="text-xs text-text-muted mt-0.5">No stockouts or immediate expiry warnings.</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-border/50 overflow-y-auto max-h-80">
+                {alerts.map((alert) => (
+                  <div key={alert.batch_no} className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-white/60 transition-colors">
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-text truncate">{alert.med_name}</p>
+                      <p className="text-xs text-text-muted mt-0.5">
+                        Batch #{alert.batch_no} · <span className="font-semibold text-text">{alert.qty_in_stock}</span> units in stock
+                        {alert.exp_date ? ` · Exp: ${fmtDate(alert.exp_date)}` : ""}
+                      </p>
+                    </div>
+                    <StatusBadge status={alert.status} />
                   </div>
-                  <StatusBadge status={alert.status} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
-        {/* Right: Recent Sales Table (spans 7 cols on desktop) */}
-        <div className="lg:col-span-7 glass-table-container rounded-[var(--radius-card)] overflow-hidden flex flex-col justify-between">
+        {/* Right: Recent Sales Table */}
+        <div className={`${canViewAlerts ? "lg:col-span-7" : "lg:col-span-12"} glass-table-container rounded-[var(--radius-card)] overflow-hidden flex flex-col justify-between`}>
           <div>
             <div className="px-5 py-4 border-b border-border/60 flex items-center justify-between bg-white/40">
               <div>
