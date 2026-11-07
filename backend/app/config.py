@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     # Environment mode (development / production)
     ENVIRONMENT: str = "development"
+    FORWARDED_ALLOW_IPS: str = "*"
 
     # Authentication & JWT
     AUTH_ENABLED: bool = True
@@ -34,6 +35,10 @@ class Settings(BaseSettings):
     def validate_production_security(self) -> "Settings":
         """Ensure production environment does not silently fall back to demo credentials or secrets."""
         is_prod = self.ENVIRONMENT.lower() in ("production", "prod")
+        if is_prod and not self.AUTH_ENABLED:
+            raise ValueError(
+                "Production configuration error: AUTH_ENABLED cannot be false in production."
+            )
         if self.AUTH_ENABLED and is_prod:
             demo_jwt = "medideck-super-secret-jwt-key-change-in-production-123456"
             demo_admin_hash = "$argon2id$v=19$m=65536,t=3,p=4$6tr/dm1Ktsw0wI81pvKOig$dfNBHjfWmjZ7zgT72QAS9N+NQuZnPj5HSEXX8uV9lwU"

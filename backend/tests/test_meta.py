@@ -46,6 +46,13 @@ async def test_categories(client: AsyncClient):
 
 
 @pytest.mark.asyncio
+async def test_categories_requires_auth(client: AsyncClient):
+    """Verify that /api/categories is protected behind authentication (returns 401 when no token provided)."""
+    resp = await client.get("/api/categories", headers={"Authorization": ""})
+    assert resp.status_code == 401
+
+
+@pytest.mark.asyncio
 async def test_health_db_failure(client: AsyncClient):
     """When the DB query fails, /api/health should return an error."""
     from app.db import get_db
@@ -58,9 +65,15 @@ async def test_health_db_failure(client: AsyncClient):
     async def _broken_db():
         yield BrokenConn()
 
+    original_override = app.dependency_overrides.get(get_db)
     app.dependency_overrides[get_db] = _broken_db
-    resp = await client.get("/api/health")
-    assert resp.status_code == 500
-    assert "detail" in resp.json()
-    app.dependency_overrides.pop(get_db, None)
+    try:
+        resp = await client.get("/api/health")
+        assert resp.status_code == 500
+        assert "detail" in resp.json()
+    finally:
+        if original_override:
+            app.dependency_overrides[get_db] = original_override
+        else:
+            app.dependency_overrides.pop(get_db, None)
 

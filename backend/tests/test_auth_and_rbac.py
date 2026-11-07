@@ -15,7 +15,7 @@ Tests:
 """
 from datetime import timedelta
 import pytest
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 
 from app.auth import create_access_token
 from app.routers.auth import reset_rate_limiter
@@ -307,35 +307,47 @@ async def test_admin_full_access(client: AsyncClient):
 async def test_login_rate_limiting(client: AsyncClient):
     """5 failed login attempts trigger 429 Too Many Requests."""
     reset_rate_limiter()
-    test_ip = "198.51.100.55"
-    headers = {"X-Forwarded-For": test_ip}
 
     # 5 failed attempts -> 401
     for i in range(5):
         resp = await client.post(
             "/api/auth/login",
-            json={"username": "admin", "password": "WrongPassword!"},
-            headers=headers,
+            json={"username": "test_limited_user", "password": "WrongPassword!"},
         )
         assert resp.status_code == 401, f"Attempt {i+1} expected 401, got {resp.status_code}"
 
-    # 6th attempt -> 429 Too Many Requests
+    # 6th attempt for the same username or IP -> 429 Too Many Requests
     blocked_resp = await client.post(
         "/api/auth/login",
-        json={"username": "admin", "password": "WrongPassword!"},
-        headers=headers,
+        json={"username": "test_limited_user", "password": "WrongPassword!"},
     )
     assert blocked_resp.status_code == 429
     assert "Too many failed login attempts" in blocked_resp.json()["detail"]
     assert "Retry-After" in blocked_resp.headers
 
-    # Another IP is unaffected
-    other_ip_resp = await client.post(
+    reset_rate_limiter()
+
+
+@pytest.mark.asyncio
+async def test_login_rate_limiting_per_username(client: AsyncClient):
+    """Failed login attempts are limited per username, protecting accounts against distributed attacks."""
+    reset_rate_limiter()
+
+    target_user = "target_pharmacist"
+    for _ in range(5):
+        resp = await client.post(
+            "/api/auth/login",
+            json={"username": target_user, "password": "WrongPassword!"},
+        )
+        assert resp.status_code == 401
+
+    # 6th attempt on target_user triggers 429
+    blocked = await client.post(
         "/api/auth/login",
-        json={"username": "admin", "password": "WrongPassword!"},
-        headers={"X-Forwarded-For": "198.51.100.99"},
+        json={"username": target_user, "password": "WrongPassword!"},
     )
-    assert other_ip_resp.status_code == 401
+    assert blocked.status_code == 429
+    assert "for this account" in blocked.json()["detail"] or "Too many failed login attempts" in blocked.json()["detail"]
 
     reset_rate_limiter()
 
@@ -370,7 +382,15 @@ async def test_employee_data_masked_for_non_admins(client: AsyncClient):
 
 
 def test_production_configuration_validation():
-    """Settings validator rejects production mode if demo secrets or demo hashes are used."""
+    """Settings validator rejects production mode if demo secrets, demo hashes, or AUTH_ENABLED=false are used."""
+    # Production with AUTH_ENABLED=False -> raises ValueError
+    with pytest.raises(ValueError, match="AUTH_ENABLED cannot be false in production"):
+        Settings(
+            ENVIRONMENT="production",
+            AUTH_ENABLED=False,
+            COOKIE_SECURE=True,
+        )
+
     # Production with default demo credentials -> raises ValueError
     with pytest.raises(ValueError, match="Production configuration error"):
         Settings(
@@ -388,3 +408,38 @@ def test_production_configuration_validation():
         COOKIE_SECURE=True,
     )
     assert valid_settings.ENVIRONMENT == "production"
+
+
+@pytest.mark.asyncio
+async def test_docs_disabled_in_production(monkeypatch):
+    """FastAPI docs (/docs, /redoc, /openapi.json) are disabled in production."""
+    from fastapi import FastAPI
+    import app.config
+
+    prod_settings = app.config.Settings(
+        ENVIRONMENT="production",
+        JWT_SECRET="valid-long-random-secret-key-at-least-32-chars-long",
+        ADMIN_PASSWORD_HASH="$argon2id$v=19$m=65536,t=3,p=4$customadminhash",
+        PHARMACIST_PASSWORD_HASH="$argon2id$v=19$m=65536,t=3,p=4$custompharmhash",
+        CASHIER_PASSWORD_HASH="$argon2id$v=19$m=65536,t=3,p=4$customcashierhash",
+        COOKIE_SECURE=True,
+    )
+    monkeypatch.setattr(app.config, "settings", prod_settings)
+
+    is_prod = prod_settings.ENVIRONMENT.lower() in ("production", "prod")
+    test_prod_app = FastAPI(
+        docs_url=None if is_prod else "/docs",
+        redoc_url=None if is_prod else "/redoc",
+        openapi_url=None if is_prod else "/openapi.json",
+    )
+
+    transport = ASGITransport(app=test_prod_app, raise_app_exceptions=False)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        docs_resp = await ac.get("/docs")
+        assert docs_resp.status_code == 404
+
+        redoc_resp = await ac.get("/redoc")
+        assert redoc_resp.status_code == 404
+
+        openapi_resp = await ac.get("/openapi.json")
+        assert openapi_resp.status_code == 404

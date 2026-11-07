@@ -18,69 +18,94 @@ from app.auth import (
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 # In-memory sliding-window rate limiter for failed login attempts
-# Tracks timestamp (float) of each failed attempt per IP
-_failed_login_attempts: Dict[str, List[float]] = defaultdict(list)
+# Tracks timestamp (float) of each failed attempt per IP and per username
+_failed_ip_attempts: Dict[str, List[float]] = defaultdict(list)
+_failed_user_attempts: Dict[str, List[float]] = defaultdict(list)
 RATE_LIMIT_WINDOW = 60.0  # 60 seconds
 RATE_LIMIT_MAX_FAILED_ATTEMPTS = 5
 
 
 def get_client_ip(request: Request) -> str:
-    """Extract client IP, taking proxy headers (X-Forwarded-For) into account safely."""
-    forwarded_for = request.headers.get("X-Forwarded-For")
-    if forwarded_for:
-        # First entry in X-Forwarded-For represents the original client
-        client_ip = forwarded_for.split(",")[0].strip()
-        if client_ip:
-            return client_ip
+    """Extract client address using the proxy-aware request.client host.
+    Stop blindly trusting untrusted X-Forwarded-For headers from the client."""
     if request.client and request.client.host:
         return request.client.host
     return "127.0.0.1"
 
 
-def _prune_stale_ips(now: float) -> None:
+def _prune_stale_records(now: float) -> None:
     """Remove expired records to prevent unbounded memory growth."""
     cutoff = now - RATE_LIMIT_WINDOW
-    stale = [ip for ip, attempts in _failed_login_attempts.items() if not attempts or attempts[-1] <= cutoff]
-    for ip in stale:
-        _failed_login_attempts.pop(ip, None)
+    stale_ips = [ip for ip, attempts in _failed_ip_attempts.items() if not attempts or attempts[-1] <= cutoff]
+    for ip in stale_ips:
+        _failed_ip_attempts.pop(ip, None)
+
+    stale_users = [u for u, attempts in _failed_user_attempts.items() if not attempts or attempts[-1] <= cutoff]
+    for u in stale_users:
+        _failed_user_attempts.pop(u, None)
 
 
-def check_rate_limit(ip: str) -> None:
-    """Enforce maximum 5 failed login attempts per client IP within 60 seconds."""
+def check_rate_limit(ip: str, username: str = "") -> None:
+    """Enforce maximum 5 failed login attempts per client IP or per username within 60 seconds."""
     now = time.time()
     cutoff = now - RATE_LIMIT_WINDOW
-    active_attempts = [t for t in _failed_login_attempts[ip] if t > cutoff]
-    _failed_login_attempts[ip] = active_attempts
 
-    if len(active_attempts) >= RATE_LIMIT_MAX_FAILED_ATTEMPTS:
-        retry_after = max(1, int(RATE_LIMIT_WINDOW - (now - active_attempts[0])) + 1)
+    # Check IP rate limit
+    active_ip_attempts = [t for t in _failed_ip_attempts[ip] if t > cutoff]
+    _failed_ip_attempts[ip] = active_ip_attempts
+    if len(active_ip_attempts) >= RATE_LIMIT_MAX_FAILED_ATTEMPTS:
+        retry_after = max(1, int(RATE_LIMIT_WINDOW - (now - active_ip_attempts[0])) + 1)
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail=f"Too many failed login attempts. Please try again in {retry_after} seconds.",
             headers={"Retry-After": str(retry_after)},
         )
 
+    # Check Username rate limit
+    normalized_user = username.strip().lower() if username else ""
+    if normalized_user:
+        active_user_attempts = [t for t in _failed_user_attempts[normalized_user] if t > cutoff]
+        _failed_user_attempts[normalized_user] = active_user_attempts
+        if len(active_user_attempts) >= RATE_LIMIT_MAX_FAILED_ATTEMPTS:
+            retry_after = max(1, int(RATE_LIMIT_WINDOW - (now - active_user_attempts[0])) + 1)
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Too many failed login attempts for this account. Please try again in {retry_after} seconds.",
+                headers={"Retry-After": str(retry_after)},
+            )
 
-def record_failed_attempt(ip: str) -> None:
-    """Record a failed login attempt for the given IP and clean up old entries."""
+
+def record_failed_attempt(ip: str, username: str = "") -> None:
+    """Record a failed login attempt for the given IP and username, and clean up old entries."""
     now = time.time()
     cutoff = now - RATE_LIMIT_WINDOW
-    active = [t for t in _failed_login_attempts[ip] if t > cutoff]
-    active.append(now)
-    _failed_login_attempts[ip] = active
 
-    if len(_failed_login_attempts) > 200:
-        _prune_stale_ips(now)
+    active_ip = [t for t in _failed_ip_attempts[ip] if t > cutoff]
+    active_ip.append(now)
+    _failed_ip_attempts[ip] = active_ip
+
+    normalized_user = username.strip().lower() if username else ""
+    if normalized_user:
+        active_user = [t for t in _failed_user_attempts[normalized_user] if t > cutoff]
+        active_user.append(now)
+        _failed_user_attempts[normalized_user] = active_user
+
+    if len(_failed_ip_attempts) > 200 or len(_failed_user_attempts) > 200:
+        _prune_stale_records(now)
 
 
-def clear_failed_attempts(ip: str) -> None:
+def clear_failed_attempts(ip: str, username: str = "") -> None:
     """Reset failed attempts upon successful login."""
-    _failed_login_attempts.pop(ip, None)
+    _failed_ip_attempts.pop(ip, None)
+    normalized_user = username.strip().lower() if username else ""
+    if normalized_user:
+        _failed_user_attempts.pop(normalized_user, None)
 
 
 def reset_rate_limiter() -> None:
     """Utility to clear all rate limiter state (used in testing)."""
-    _failed_login_attempts.clear()
+    _failed_ip_attempts.clear()
+    _failed_user_attempts.clear()
 
 
 class LoginRequest(BaseModel):
@@ -110,18 +135,18 @@ class VerifyResponse(BaseModel):
 async def login(payload: LoginRequest, request: Request, response: Response):
     """Authenticate user with username and password, issuing JWT in cookie and body."""
     client_ip = get_client_ip(request)
-    check_rate_limit(client_ip)
+    check_rate_limit(client_ip, payload.username)
 
     user = get_user_by_username(payload.username)
     if not user or not verify_password(user["password_hash"], payload.password):
-        record_failed_attempt(client_ip)
+        record_failed_attempt(client_ip, payload.username)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password",
         )
 
-    # Successful login: reset failed attempts for this client IP
-    clear_failed_attempts(client_ip)
+    # Successful login: reset failed attempts for this client IP and username
+    clear_failed_attempts(client_ip, payload.username)
 
     token = create_access_token({"username": user["username"], "role": user["role"]})
     csrf_token = generate_csrf_token()

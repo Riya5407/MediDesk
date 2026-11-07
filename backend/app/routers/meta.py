@@ -1,17 +1,24 @@
 """Meta endpoints: /api/health, /api/meta, /api/categories."""
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.config import settings
 from app.db import get_db
+from app.auth import require_roles
 
 router = APIRouter(prefix="/api", tags=["meta"])
 
 
 @router.get("/health")
 async def health(conn=Depends(get_db)):
-    """Health check – also verifies the database connection."""
-    await conn.execute("SELECT 1")
-    return {"status": "ok"}
+    """Health check that does not require auth and does not leak database/internal details."""
+    try:
+        await conn.execute("SELECT 1")
+        return {"status": "ok"}
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Health check failed",
+        )
 
 
 @router.get("/meta")
@@ -26,8 +33,11 @@ async def meta():
 
 
 @router.get("/categories")
-async def categories(conn=Depends(get_db)):
-    """Return distinct medicine categories."""
+async def categories(
+    conn=Depends(get_db),
+    _user: dict = Depends(require_roles("admin", "pharmacist", "cashier")),
+):
+    """Return distinct medicine categories (requires authentication)."""
     cur = await conn.execute(
         "SELECT DISTINCT category FROM medicine ORDER BY category"
     )

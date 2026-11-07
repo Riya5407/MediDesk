@@ -42,7 +42,15 @@ async def lifespan(app: FastAPI):
         await app.state.pool.close()
 
 
-app = FastAPI(title="MediDeck API", lifespan=lifespan)
+is_prod = settings.ENVIRONMENT.lower() in ("production", "prod")
+
+app = FastAPI(
+    title="MediDeck API",
+    lifespan=lifespan,
+    docs_url=None if is_prod else "/docs",
+    redoc_url=None if is_prod else "/redoc",
+    openapi_url=None if is_prod else "/openapi.json",
+)
 
 # CORS configuration supporting credentials (cookies)
 origins = [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()]
