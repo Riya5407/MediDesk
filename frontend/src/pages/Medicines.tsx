@@ -7,6 +7,7 @@ import {
   useDeleteMedicine,
 } from "../api/medicines";
 import type { Medicine, MedicineInput } from "../api/types";
+import { getErrorMessage } from "../api/client";
 import StatusBadge from "../components/StatusBadge";
 import { useCurrentUser } from "../api/auth";
 import {
@@ -118,8 +119,8 @@ export default function Medicines() {
         await createMutation.mutateAsync(formData);
       }
       setIsModalOpen(false);
-    } catch (err: any) {
-      setFormError(err?.detail || "Failed to save medicine.");
+    } catch (err: unknown) {
+      setFormError(getErrorMessage(err, "Failed to save medicine."));
     }
   };
 
@@ -128,8 +129,8 @@ export default function Medicines() {
     try {
       await deleteMutation.mutateAsync(deleteCandidate.med_no);
       setDeleteCandidate(null);
-    } catch (err: any) {
-      alert(err?.detail || "Failed to delete medicine.");
+    } catch (err: unknown) {
+      alert(getErrorMessage(err, "Failed to delete medicine."));
     }
   };
 
@@ -233,7 +234,7 @@ export default function Medicines() {
             <AlertCircle className="w-10 h-10 text-coral mb-3" />
             <h3 className="text-base font-bold text-text">Failed to load medicines</h3>
             <p className="text-xs md:text-sm text-text-muted mt-1 mb-4">
-              {(error as any)?.detail || "Could not retrieve catalog records."}
+              {getErrorMessage(error, "Could not retrieve catalog records.")}
             </p>
             <button
               onClick={() => refetch()}

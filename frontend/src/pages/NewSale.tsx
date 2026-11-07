@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { usePosMedicines, useCreateSale } from "../api/sales";
 import type { PosMedicine, SaleLineInput } from "../api/sales";
 import { useEmployees } from "../api/employees";
-import { request } from "../api/client";
+import { request, getErrorMessage } from "../api/client";
 import type { MetaResponse } from "../api/types";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -121,8 +121,8 @@ export default function NewSale() {
       });
       setSubmitSuccess(result.bill_no);
       setCart([]);
-    } catch (err: any) {
-      setSubmitError(err?.detail || "Failed to create sale.");
+    } catch (err: unknown) {
+      setSubmitError(getErrorMessage(err, "Failed to create sale."));
     }
   };
 

@@ -309,15 +309,18 @@ export default function Dashboard() {
                     tickLine={false}
                   />
                   <YAxis
-                    tickFormatter={(v: any) => `₹${v}`}
+                    tickFormatter={(v: number | string) => `₹${v}`}
                     tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
                     axisLine={false}
                     tickLine={false}
                     width={55}
                   />
                   <Tooltip
-                    formatter={(value: any) => [fmtCurrency(Number(value) || 0), "Revenue"]}
-                    labelFormatter={(label: any) => fmtShortDate(String(label))}
+                    formatter={(value: unknown) => [
+                      fmtCurrency(Number(value) || 0),
+                      "Revenue",
+                    ]}
+                    labelFormatter={(label: React.ReactNode) => fmtShortDate(String(label))}
                     contentStyle={{
                       borderRadius: "var(--radius-card)",
                       border: "1px solid var(--color-border)",
@@ -388,12 +391,13 @@ export default function Dashboard() {
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: any, _name: any, item: any) => {
+                      formatter={(value: unknown, _name: unknown, item: unknown) => {
                         const count = Number(value) || 0;
                         const pct = totalCategoryStockUnits > 0
                           ? ((count / totalCategoryStockUnits) * 100).toFixed(1)
                           : "0";
-                        return [`${count} units (${pct}%)`, item.payload.category];
+                        const entry = item as { payload?: { category?: string } } | undefined;
+                        return [`${count} units (${pct}%)`, entry?.payload?.category ?? ""];
                       }}
                       contentStyle={{
                         borderRadius: "var(--radius-card)",

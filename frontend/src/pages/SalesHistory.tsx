@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSales, useSale, useCancelSale } from "../api/sales";
+import { getErrorMessage } from "../api/client";
 import { useCurrentUser } from "../api/auth";
 import {
   Search,
@@ -54,8 +55,8 @@ export default function SalesHistory() {
       await cancelMutation.mutateAsync(cancelCandidate);
       setCancelCandidate(null);
       if (viewBillNo === cancelCandidate) setViewBillNo(null);
-    } catch (err: any) {
-      alert(err?.detail || "Failed to cancel sale.");
+    } catch (err: unknown) {
+      alert(getErrorMessage(err, "Failed to cancel sale."));
     }
   };
 
@@ -125,7 +126,7 @@ export default function SalesHistory() {
             <AlertCircle className="w-10 h-10 text-coral mb-3" />
             <h3 className="text-base font-semibold text-text">Failed to load sales</h3>
             <p className="text-sm text-text-muted mt-1 mb-4">
-              {(error as any)?.detail || "Could not retrieve sales records."}
+              {getErrorMessage(error, "Could not retrieve sales records.")}
             </p>
             <button
               onClick={() => refetch()}

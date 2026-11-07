@@ -92,4 +92,37 @@ describe("App tests with Authentication", () => {
     expect(within(sidebar).queryByText("Suppliers")).not.toBeInTheDocument();
     expect(within(sidebar).queryByText("Prescriptions")).not.toBeInTheDocument();
   });
+
+  it("renders the session expired alert on /login?expired=true", () => {
+    queryClient.setQueryData(["auth", "me"], null);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/login?expired=true"]}>
+          <App />
+        </MemoryRouter>
+      </QueryClientProvider>
+    );
+
+    expect(
+      screen.getByText("Your session has expired. Please sign in again.")
+    ).toBeInTheDocument();
+  });
+});
+
+describe("API Client Error Handling Helpers", () => {
+  it("correctly identifies ApiError and extracts messages", async () => {
+    const { isApiError, getErrorMessage } = await import("../src/api/client");
+
+    const customErr = { detail: "Custom database failure", status: 500 };
+    expect(isApiError(customErr)).toBe(true);
+    expect(getErrorMessage(customErr)).toBe("Custom database failure");
+
+    const stdError = new Error("Network timeout");
+    expect(isApiError(stdError)).toBe(false);
+    expect(getErrorMessage(stdError)).toBe("Network timeout");
+
+    expect(getErrorMessage("unexpected string")).toBe("An unexpected error occurred.");
+    expect(getErrorMessage(null, "Fallback message")).toBe("Fallback message");
+  });
 });

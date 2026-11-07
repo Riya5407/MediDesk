@@ -1,16 +1,27 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLogin } from "../api/auth";
-import { Eye, EyeOff, Lock, User, AlertCircle, Loader2 } from "lucide-react";
+import { getErrorMessage, onServerWakeupChange } from "../api/client";
+import { Eye, EyeOff, Lock, User, AlertCircle, Loader2, Info } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isSessionExpired = searchParams.get("expired") === "true";
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isWakingUp, setIsWakingUp] = useState(false);
 
   const loginMutation = useLogin();
+
+  useEffect(() => {
+    return onServerWakeupChange((waking) => {
+      setIsWakingUp(waking);
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,8 +38,8 @@ export default function Login() {
         password,
       });
       navigate("/", { replace: true });
-    } catch (err: any) {
-      setErrorMessage(err?.detail || "Invalid username or password.");
+    } catch (err: unknown) {
+      setErrorMessage(getErrorMessage(err, "Invalid username or password."));
     }
   };
 
@@ -64,6 +75,22 @@ export default function Login() {
             </p>
           </div>
         </div>
+
+        {/* Session Expired Feedback */}
+        {isSessionExpired && !errorMessage && (
+          <div className="flex items-center gap-2.5 p-3.5 rounded-[var(--radius-control)] bg-amber-tint border border-amber/30 text-amber-text text-xs font-medium">
+            <AlertCircle className="w-4 h-4 shrink-0 text-amber" />
+            <span>Your session has expired. Please sign in again.</span>
+          </div>
+        )}
+
+        {/* Server Waking Up Notice */}
+        {isWakingUp && (
+          <div className="flex items-center gap-2.5 p-3.5 rounded-[var(--radius-control)] bg-teal-tint border border-primary/20 text-primary text-xs font-medium animate-pulse">
+            <Loader2 className="w-4 h-4 shrink-0 animate-spin" />
+            <span>Waking up the server, this can take up to a minute...</span>
+          </div>
+        )}
 
         {/* Error Feedback */}
         {errorMessage && (

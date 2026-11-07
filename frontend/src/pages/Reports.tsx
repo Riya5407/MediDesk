@@ -192,15 +192,18 @@ export default function Reports() {
                     tickLine={false}
                   />
                   <YAxis
-                    tickFormatter={(v: any) => `₹${v}`}
+                    tickFormatter={(v: number | string) => `₹${v}`}
                     tick={{ fontSize: 10, fill: "var(--color-text-muted)" }}
                     axisLine={false}
                     tickLine={false}
                     width={60}
                   />
                   <Tooltip
-                    formatter={(value: any) => [fmtCurrency(Number(value) || 0), "Revenue"]}
-                    labelFormatter={(l: any) => fmtDate(String(l))}
+                    formatter={(value: unknown) => [
+                      fmtCurrency(Number(value) || 0),
+                      "Revenue",
+                    ]}
+                    labelFormatter={(l: React.ReactNode) => fmtDate(String(l))}
                     contentStyle={{
                       borderRadius: "var(--radius-card)",
                       border: "1px solid var(--color-border)",

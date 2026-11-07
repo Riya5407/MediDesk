@@ -7,6 +7,7 @@ import {
   useReceivePurchaseOrder,
 } from "../api/purchaseOrders";
 import type { POLineInput, POReceiveLine } from "../api/purchaseOrders";
+import { getErrorMessage } from "../api/client";
 import { useSuppliers } from "../api/suppliers";
 import { useMedicines } from "../api/medicines";
 import {
@@ -97,8 +98,8 @@ export default function PurchaseOrders() {
       setIsCreateOpen(false);
       setCreateSupNo("");
       setCreateLines([{ med_no: "", qty_ordered: 1, rate: 0 }]);
-    } catch (err: any) {
-      setFormError(err?.detail || "Failed to create purchase order.");
+    } catch (err: unknown) {
+      setFormError(getErrorMessage(err, "Failed to create purchase order."));
     }
   };
 
@@ -106,8 +107,8 @@ export default function PurchaseOrders() {
     if (!confirm(`Cancel Purchase Order #${pur_no}?`)) return;
     try {
       await cancelMutation.mutateAsync(pur_no);
-    } catch (err: any) {
-      alert(err?.detail || "Failed to cancel order.");
+    } catch (err: unknown) {
+      alert(getErrorMessage(err, "Failed to cancel order."));
     }
   };
 
@@ -127,8 +128,8 @@ export default function PurchaseOrders() {
       await receiveMutation.mutateAsync({ pur_no: isReceiveOpen, data: { lines } });
       setIsReceiveOpen(null);
       setViewPurNo(null);
-    } catch (err: any) {
-      setFormError(err?.detail || "Failed to receive order.");
+    } catch (err: unknown) {
+      setFormError(getErrorMessage(err, "Failed to receive order."));
     }
   };
 
@@ -180,7 +181,7 @@ export default function PurchaseOrders() {
           <div className="p-12 text-center flex flex-col items-center">
             <AlertCircle className="w-10 h-10 text-coral mb-3" />
             <h3 className="text-base font-semibold text-text">Failed to load purchase orders</h3>
-            <p className="text-sm text-text-muted mt-1 mb-4">{(error as any)?.detail || "Could not retrieve records."}</p>
+            <p className="text-sm text-text-muted mt-1 mb-4">{getErrorMessage(error, "Could not retrieve records.")}</p>
             <button onClick={() => refetch()} className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-white/80 transition-colors">
               <RefreshCw className="w-4 h-4" /> Retry
             </button>

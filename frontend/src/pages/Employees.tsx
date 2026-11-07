@@ -6,6 +6,7 @@ import {
   useDeleteEmployee,
 } from "../api/employees";
 import type { Employee, EmployeeInput } from "../api/types";
+import { getErrorMessage } from "../api/client";
 import { useCurrentUser } from "../api/auth";
 import {
   Search,
@@ -94,8 +95,8 @@ export default function Employees() {
         await createMutation.mutateAsync(formData);
       }
       setIsModalOpen(false);
-    } catch (err: any) {
-      setFormError(err?.detail || "Failed to save employee.");
+    } catch (err: unknown) {
+      setFormError(getErrorMessage(err, "Failed to save employee."));
     }
   };
 
@@ -104,8 +105,8 @@ export default function Employees() {
     try {
       await deleteMutation.mutateAsync(deleteCandidate.emp_no);
       setDeleteCandidate(null);
-    } catch (err: any) {
-      alert(err?.detail || "Failed to delete employee.");
+    } catch (err: unknown) {
+      alert(getErrorMessage(err, "Failed to delete employee."));
     }
   };
 
@@ -164,7 +165,7 @@ export default function Employees() {
             <AlertCircle className="w-10 h-10 text-coral mb-3" />
             <h3 className="text-base font-semibold text-text">Failed to load staff records</h3>
             <p className="text-sm text-text-muted mt-1 mb-4">
-              {(error as any)?.detail || "Could not retrieve employee list."}
+              {getErrorMessage(error, "Could not retrieve employee list.")}
             </p>
             <button
               onClick={() => refetch()}

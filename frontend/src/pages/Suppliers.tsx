@@ -6,6 +6,7 @@ import {
   useDeleteSupplier,
 } from "../api/suppliers";
 import type { Supplier, SupplierInput } from "../api/types";
+import { getErrorMessage } from "../api/client";
 import {
   Search,
   Plus,
@@ -110,8 +111,8 @@ export default function Suppliers() {
         await createMutation.mutateAsync({ ...formData, phones: cleanedPhones });
       }
       setIsModalOpen(false);
-    } catch (err: any) {
-      setFormError(err?.detail || "Failed to save supplier.");
+    } catch (err: unknown) {
+      setFormError(getErrorMessage(err, "Failed to save supplier."));
     }
   };
 
@@ -120,8 +121,8 @@ export default function Suppliers() {
     try {
       await deleteMutation.mutateAsync(deleteCandidate.sup_no);
       setDeleteCandidate(null);
-    } catch (err: any) {
-      alert(err?.detail || "Failed to delete supplier.");
+    } catch (err: unknown) {
+      alert(getErrorMessage(err, "Failed to delete supplier."));
     }
   };
 
@@ -170,7 +171,7 @@ export default function Suppliers() {
             <AlertCircle className="w-10 h-10 text-coral mb-3" />
             <h3 className="text-base font-semibold text-text">Failed to load suppliers</h3>
             <p className="text-sm text-text-muted mt-1 mb-4">
-              {(error as any)?.detail || "Could not retrieve vendor records."}
+              {getErrorMessage(error, "Could not retrieve vendor records.")}
             </p>
             <button
               onClick={() => refetch()}

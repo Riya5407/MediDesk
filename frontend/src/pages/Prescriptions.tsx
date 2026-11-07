@@ -7,6 +7,7 @@ import {
   useDeletePrescription,
 } from "../api/prescriptions";
 import type { PrescriptionCreate } from "../api/prescriptions";
+import { getErrorMessage } from "../api/client";
 import { useMedicines } from "../api/medicines";
 import {
   Search,
@@ -130,8 +131,8 @@ export default function Prescriptions() {
       }
       setIsModalOpen(false);
       setEditingPresNo(null);
-    } catch (err: any) {
-      setFormError(err?.detail || "Failed to save prescription.");
+    } catch (err: unknown) {
+      setFormError(getErrorMessage(err, "Failed to save prescription."));
     }
   };
 
@@ -141,8 +142,8 @@ export default function Prescriptions() {
       await deleteMutation.mutateAsync(deleteCandidate.pres_no);
       setDeleteCandidate(null);
       if (viewPresNo === deleteCandidate.pres_no) setViewPresNo(null);
-    } catch (err: any) {
-      alert(err?.detail || "Failed to delete prescription.");
+    } catch (err: unknown) {
+      alert(getErrorMessage(err, "Failed to delete prescription."));
     }
   };
 
@@ -189,7 +190,7 @@ export default function Prescriptions() {
           <div className="p-12 text-center flex flex-col items-center">
             <AlertCircle className="w-10 h-10 text-coral mb-3" />
             <h3 className="text-base font-semibold text-text">Failed to load prescriptions</h3>
-            <p className="text-sm text-text-muted mt-1 mb-4">{(error as any)?.detail || "Could not retrieve records."}</p>
+            <p className="text-sm text-text-muted mt-1 mb-4">{getErrorMessage(error, "Could not retrieve records.")}</p>
             <button onClick={() => refetch()} className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-[var(--radius-control)] text-sm font-medium hover:bg-white/80 transition-colors">
               <RefreshCw className="w-4 h-4" /> Retry
             </button>
